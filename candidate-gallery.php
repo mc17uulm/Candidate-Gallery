@@ -23,7 +23,7 @@ function cg_activate()
     wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
 }
 
-function cg_build_candidate(array $candidate) : string
+function cg_build_candidate(array $candidate, string $committee) : string
 {
     ob_start();
     include __DIR__ . "/cg_template.php";
@@ -32,7 +32,23 @@ function cg_build_candidate(array $candidate) : string
     return $html;
 }
 
-function cg_build(string $data) : string
+function cg_sort(array &$data, string $committee) : void
+{
+    $data = array_filter($data, function($el) use ($committee) {
+        return $el["committee"][$committee]["active"];
+    });
+    usort($data, function ($a, $b) use ($committee) {
+        if($a["committee"][$committee]["active"] && $b["committee"][$committee]["active"]) {
+            return $a["committee"][$committee]["position"] - $b["committee"][$committee]["position"];
+        } else if($a["committee"][$committee]["active"]) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+}
+
+function cg_build(string $data, string $committee) : string
 {
     $file = __DIR__ . "/data/$data.json";
     if(file_exists($file) && is_readable($file))
@@ -42,23 +58,26 @@ function cg_build(string $data) : string
         {
             $i = 0;
             $htmlTag = "";
-            foreach($json["candidates"] as $candidate)
-            {
-                if(($i%2) === 0) {
-                    $htmlTag .= "<div class=\"cg_row\">";
+            $candidates = $json["candidates"];
+            cg_sort($candidates, $committee);
+            if(!empty($json["candidates"])) {
+                foreach ($candidates as $candidate) {
+                    if (($i % 2) === 0) {
+                        $htmlTag .= "<div class=\"cg_row\">";
+                    }
+                    $htmlTag .= "<div class=\"cg_column\">";
+                    $htmlTag .= cg_build_candidate($candidate, $committee);
+                    $htmlTag .= "</div>";
+                    if (($i % 2) !== 0) {
+                        $htmlTag .= "</div><br />";
+                    }
+                    $i++;
                 }
-                $htmlTag .= "<div class=\"cg_column\">";
-                $htmlTag .= cg_build_candidate($candidate);
-                $htmlTag .= "</div>";
-                if(($i%2) !== 0) {
+                if (($i % 2) !== 0) {
                     $htmlTag .= "</div><br />";
                 }
-                $i++;
+                return $htmlTag;
             }
-            if(($i%2) !== 0) {
-                $htmlTag .= "</div><br />";
-            }
-            return $htmlTag;
         }
     }
 
@@ -70,14 +89,16 @@ function cg_shortcode($atts)
 {
 
 
-    $atts = shortcode_atts(array('data' => ''), $atts, 'candidate_gallery');
+    $atts = shortcode_atts(array('data' => '', 'committee' => ''), $atts, 'candidate_gallery');
 
     if(empty($atts["data"]))
     {
         return "<strong>Error:</strong> [candidate_gallery] shortcode arguments are invalid";
     }
 
-    return cg_build($atts["data"]);
+    $committee = empty($atts["committee"]) || !in_array($atts["committee"], array("kt", "gr", "or")) ? "gr" : $atts["committee"];
+
+    return cg_build($atts["data"], $committee);
 
 }
 
