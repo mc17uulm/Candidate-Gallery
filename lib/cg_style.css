@@ -1,0 +1,11 @@
+.cg_column {
+    float: left;
+    width: 45%;
+    margin-right: 5%;
+}
+
+.cg_row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
