@@ -5,8 +5,8 @@
 <address>
     <?= $candidate["statement"] ?>
 </address>
-<br />
 <strong>Kandidiert für:</strong>
+<br />
 <ul>
     <?php
     if($candidate["gremium"]["kt"]["active"]) { echo "<li>Kreistag (Listenplatz " . $candidate["gremium"]["kt"]["position"] . ")</li>"; }

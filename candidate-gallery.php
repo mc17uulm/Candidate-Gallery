@@ -3,7 +3,7 @@
  * Plugin Name: Candidate Gallery
  * Description: Parses json data to candidate gallery - Kommunalwahl 2019 - Grüne Heidenheim
  * Author: mc17uulm
- * Author URI: https://combosch.de
+ * Author URI: https://github.com/mc17uulm/Candidate-Gallery
  * Version: 0.1
  * Text Domain : cg_language
  * Domain Path: /lang
@@ -70,7 +70,7 @@ function cg_shortcode($atts)
 {
 
 
-    //$atts = shortcode_atts(array('data' => ''), $atts, 'candidate_gallery');
+    $atts = shortcode_atts(array('data' => ''), $atts, 'candidate_gallery');
 
     if(empty($atts["data"]))
     {
