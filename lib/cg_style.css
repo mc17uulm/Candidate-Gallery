@@ -4,6 +4,25 @@
     margin-right: 5%;
 }
 
+.cg_image {
+    position: relative;
+}
+
+.cg_district {
+    text-align: right;
+    margin-top: 95%;
+    background-color: #e6007e;
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.cg_district p {
+    margin: 5px 10px 5px !important;
+    font-weight: bold;
+}
+
 .cg_row:after {
     content: "";
     display: table;
