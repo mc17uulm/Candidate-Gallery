@@ -74,7 +74,7 @@ function cg_build(string $data, string $committee) : string
                     $i++;
                 }
                 if (($i % 2) !== 0) {
-                    $htmlTag .= "</div><br />";
+                    $htmlTag .= "<div class=\"cg_column\"></div></div><br />";
                 }
                 return $htmlTag;
             }
