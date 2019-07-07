@@ -48,57 +48,86 @@ function cg_sort(array &$data, string $committee) : void
     });
 }
 
-function cg_build(string $data, string $committee) : string
+function cg_build(string $data, string $type, string $committee = "") : string
 {
-    $file = __DIR__ . "/data/$data.json";
-    if(file_exists($file) && is_readable($file))
+    switch($type)
     {
-        $json = json_decode(file_get_contents($file), true);
-        if(!empty($json["candidates"]))
-        {
-            $i = 0;
-            $htmlTag = "";
-            $candidates = $json["candidates"];
-            cg_sort($candidates, $committee);
-            if(!empty($json["candidates"])) {
-                foreach ($candidates as $candidate) {
-                    if (($i % 2) === 0) {
-                        $htmlTag .= "<div class=\"cg_row\">";
-                    }
-                    $htmlTag .= "<div class=\"cg_column\">";
-                    $htmlTag .= cg_build_candidate($candidate, $committee);
-                    $htmlTag .= "</div>";
-                    if (($i % 2) !== 0) {
-                        $htmlTag .= "</div><br />";
-                    }
-                    $i++;
+        case "election": return cg_build_election($data, $committee);
+        case "board": return cg_build_board($data);
+        case "delegates": return cg_build_delegates($data);
+        case "mandates": return cg_build_mandates($data);
+        default: return "<strong>Error:</strong> [candidate_gallery] type attribute is invalid. Possible types: [election, board, delegates, mandates]";
+    }
+}
+
+function cg_build_board(string $data)
+{
+    $json = cg_load_file($data);
+    
+}
+
+function cg_build_election(string $data, string $committee)
+{
+    $json = cg_load_file($data);
+    if(!empty($json["candidates"]))
+    {
+        $i = 0;
+        $htmlTag = "";
+        $candidates = $json["candidates"];
+        cg_sort($candidates, $committee);
+        if(!empty($json["candidates"])) {
+            foreach ($candidates as $candidate) {
+                if (($i % 2) === 0) {
+                    $htmlTag .= "<div class=\"cg_row\">";
                 }
+                $htmlTag .= "<div class=\"cg_column\">";
+                $htmlTag .= cg_build_candidate($candidate, $committee);
+                $htmlTag .= "</div>";
                 if (($i % 2) !== 0) {
-                    $htmlTag .= "<div class=\"cg_column\"></div></div><br />";
+                    $htmlTag .= "</div><br />";
                 }
-                return $htmlTag;
+                $i++;
             }
+            if (($i % 2) !== 0) {
+                $htmlTag .= "<div class=\"cg_column\"></div></div><br />";
+            }
+            return $htmlTag;
         }
     }
-
     return "<strong>Error:</strong> [candidate_gallery] data is invalid";
+}
 
+function cg_load_file(string $file) : array
+{
+    $file = __DIR__ . "/data/$file.json";
+    if(file_exists($file) && is_readable($file))
+    {
+        try{
+            return json_decode(file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+        } catch(JsonException $e){}
+    }
+    return [];
 }
 
 function cg_shortcode($atts)
 {
 
 
-    $atts = shortcode_atts(array('data' => '', 'committee' => ''), $atts, 'candidate_gallery');
+    $atts = shortcode_atts(array('data' => '', 'type' => '', 'committee' => ''), $atts, 'candidate_gallery');
 
-    if(empty($atts["data"]))
+    if(empty($atts["data"]) || empty($atts["type"]))
     {
         return "<strong>Error:</strong> [candidate_gallery] shortcode arguments are invalid";
     }
 
+    if(!in_array($atts["type"], array("election", "board", "delegates", "mandates")))
+    {
+        return "<strong>Error:</strong> [candidate_gallery] type attribute is invalid. Possible types: [election, board, delegates, mandates]";
+    }
+
     $committee = empty($atts["committee"]) || !in_array($atts["committee"], array("kt", "gr", "or")) ? "gr" : $atts["committee"];
 
-    return cg_build($atts["data"], $committee);
+    return cg_build($atts["data"], $atts["type"], $committee);
 
 }
 

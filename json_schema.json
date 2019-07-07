@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "",
+  "title": "Candidate Gallery Json Data Schema",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "candidates": {
+      "description": "List of candidate objects",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "job": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "children": {
+            "type": "string"
+          },
+          "grandchildren": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "picture": {
+            "type": "string"
+          },
+          "committee": {
+            "type": "object",
+            "properties": {
+              "kt": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "district": {
+                    "type": "string"
+                  },
+                  "list": {
+                    "type": "string"
+                  }
+                },
+                "required": ["active", "position"]
+              },
+              "gr": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "district": {
+                    "type": "string"
+                  },
+                  "list": {
+                    "type": "string"
+                  }
+                },
+                "required": ["active", "position"]
+              },
+              "or": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "position": {
+                    "type": "integer"
+                  },
+                  "district": {
+                    "type": "string"
+                  },
+                  "list": {
+                    "type": "string"
+                  }
+                },
+                "required": ["active", "position"]
+              }
+            }
+          }
+        },
+        "required": ["name", "age", "job", "committee"]
+      }
+    }
+  },
+  "required": ["candidates"]
+}

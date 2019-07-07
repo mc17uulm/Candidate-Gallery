@@ -1,0 +1,17 @@
+{
+    "name": "mc17uulm/candidate-gallery",
+    "authors": [
+        {
+            "name": "mc17uulm",
+            "email": "marco.combosch@uni-ulm.de"
+        }
+    ],
+    "require": {
+        "opis/json-schema": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CandidateGallery\\": "./src/"
+        }
+    }
+}

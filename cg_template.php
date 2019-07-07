@@ -25,7 +25,10 @@ if($committee !== "kt") {
     <?php
     if($candidate["committee"]["kt"]["active"]) { echo "<li>Kreistag (Listenplatz " . $candidate["committee"]["kt"]["position"] . ")</li>"; }
     if($candidate["committee"]["gr"]["active"]) { echo "<li>Gemeinderat (Listenplatz " . $candidate["committee"]["gr"]["position"] . ")</li>"; }
-    if($candidate["committee"]["or"]["active"]) { echo "<li>Ortschaftsrat (Listenplatz " . $candidate["committee"]["or"]["position"] . ")</li>"; }
+    if($candidate["committee"]["or"]["active"]) {
+        echo "<li>Ortschaftsrat (Listenplatz " . $candidate["committee"]["or"]["position"] . ")" .
+            (!empty($candidate["committee"]["or"]["list"]) ? " - " . $candidate["committee"]["or"]["list"] : "") . "</li>";
+    }
     ?>
 </ul>
 <?php } ?>
