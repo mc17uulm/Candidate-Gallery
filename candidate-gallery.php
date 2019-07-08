@@ -18,9 +18,45 @@
  *
  */
 
+require_once 'vendor/autoload.php';
+
+use CandidateGallery\App;
+use CandidateGallery\helper\Database;
+
+function cg_initialize()
+{
+    Database::initialize();
+}
+
+function cg_remove()
+{
+    Database::remove();
+}
+
 function cg_activate()
 {
     wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
+}
+
+function cg_page()
+{
+    ?>
+    <div>
+        <p>
+            <?php
+                $gallery = new \CandidateGallery\Gallery(0, "Test", []);
+                Database::add_gallery($gallery);
+                Database::get_gallery(0);
+            ?>
+        </p>
+    </div>
+    <?php
+}
+
+function cg_menu()
+{
+    $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", "cg_page", "dashicons-admin-network");
+    //add_action('load-' . $page, )
 }
 
 function cg_build_candidate(array $candidate, string $committee) : string
@@ -111,25 +147,11 @@ function cg_load_file(string $file) : array
 
 function cg_shortcode($atts)
 {
-
-
-    $atts = shortcode_atts(array('data' => '', 'type' => '', 'committee' => ''), $atts, 'candidate_gallery');
-
-    if(empty($atts["data"]) || empty($atts["type"]))
-    {
-        return "<strong>Error:</strong> [candidate_gallery] shortcode arguments are invalid";
-    }
-
-    if(!in_array($atts["type"], array("election", "board", "delegates", "mandates")))
-    {
-        return "<strong>Error:</strong> [candidate_gallery] type attribute is invalid. Possible types: [election, board, delegates, mandates]";
-    }
-
-    $committee = empty($atts["committee"]) || !in_array($atts["committee"], array("kt", "gr", "or")) ? "gr" : $atts["committee"];
-
-    return cg_build($atts["data"], $atts["type"], $committee);
-
+    App::handle_shortcode($atts);
 }
 
+register_activation_hook(__FILE__, 'cg_initialize');
+register_deactivation_hook(__FILE__, 'cg_remove');
 add_action('wp_enqueue_scripts', 'cg_activate');
 add_shortcode('candidate_gallery', 'cg_shortcode');
+add_action('admin_menu', 'cg_menu');

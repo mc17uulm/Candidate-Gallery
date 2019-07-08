@@ -15,9 +15,9 @@ class Candidate extends Board
     private $statement;
     private $committee;
 
-    public function __construct(string $name, string $picture, string $email, string $function, int $age, string $job, string $family, int $children, int $grandchildren, string $statement, Committee $committee)
+    public function __construct(string $name, string $picture, int $position, string $email, string $function, int $age, string $job, string $family, int $children, int $grandchildren, string $statement, Committee $committee)
     {
-        parent::__construct($name, $picture, $email, $function);
+        parent::__construct($name, $picture, $position, $email, $function);
         $this->age = $age;
         $this->job = $job;
         $this->family = $family;

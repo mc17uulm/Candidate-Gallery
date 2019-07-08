@@ -8,9 +8,9 @@ class Board extends Picture
     private $email;
     private $function;
 
-    public function __construct(string $name, string $picture, string $email, string $function)
+    public function __construct(string $name, string $picture, int $position, string $email, string $function)
     {
-        parent::__construct($name, $picture);
+        parent::__construct($name, $picture, $position);
         $this->email = $email;
         $this->function = $function;
     }
