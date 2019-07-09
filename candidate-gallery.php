@@ -22,6 +22,8 @@ require_once 'vendor/autoload.php';
 
 use CandidateGallery\App;
 use CandidateGallery\helper\Database;
+use CandidateGallery\API;
+use CandidateGallery\views\AddGallery;
 
 function cg_initialize()
 {
@@ -38,25 +40,39 @@ function cg_activate()
     wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
 }
 
+function cg_load_admin_scripts()
+{
+    wp_enqueue_script('cg_add_render', plugins_url('dist/add.js', __FILE__), array(), false, true);
+}
+
 function cg_page()
 {
     ?>
     <div>
         <p>
             <?php
-                $gallery = new \CandidateGallery\Gallery(0, "Test", []);
-                Database::add_gallery($gallery);
-                Database::get_gallery(0);
+                echo "1";
             ?>
         </p>
     </div>
     <?php
 }
 
+function cg_add_gallery_page()
+{
+    AddGallery::render();
+}
+
 function cg_menu()
 {
     $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", "cg_page", "dashicons-admin-network");
+    add_submenu_page('candidate-gallery', 'Add Gallery', 'Add Gallery', 'manage_options', 'cg_add_gallery', 'cg_add_gallery_page');
     //add_action('load-' . $page, )
+}
+
+function cg_ajax()
+{
+    API::handle();
 }
 
 function cg_build_candidate(array $candidate, string $committee) : string
@@ -152,6 +168,11 @@ function cg_shortcode($atts)
 
 register_activation_hook(__FILE__, 'cg_initialize');
 register_deactivation_hook(__FILE__, 'cg_remove');
+
 add_action('wp_enqueue_scripts', 'cg_activate');
+add_action('admin_enqueue_scripts', 'cg_load_admin_scripts');
+
 add_shortcode('candidate_gallery', 'cg_shortcode');
 add_action('admin_menu', 'cg_menu');
+
+add_action('wp_ajax_cg_ajax', 'cg_ajax');

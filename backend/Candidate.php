@@ -12,19 +12,17 @@ class Candidate extends Board
     private $family;
     private $children;
     private $grandchildren;
-    private $statement;
-    private $committee;
+    private $committees;
 
-    public function __construct(string $name, string $picture, int $position, string $email, string $function, int $age, string $job, string $family, int $children, int $grandchildren, string $statement, Committee $committee)
+    public function __construct(string $name, string $picture, int $position, string $email, string $function, int $age, string $job, string $family, int $children, int $grandchildren, string $statement, array $committees)
     {
-        parent::__construct($name, $picture, $position, $email, $function);
+        parent::__construct($name, $picture, $position, $email, $function, $statement);
         $this->age = $age;
         $this->job = $job;
         $this->family = $family;
         $this->children = $children;
         $this->grandchildren = $grandchildren;
-        $this->statement = $statement;
-        $this->committee = $committee;
+        $this->committees = $committees;
     }
 
     public function get_age(): int
@@ -52,13 +50,9 @@ class Candidate extends Board
         return $this->grandchildren;
     }
 
-    public function get_statement(): string
+    public function get_committees() : array
     {
-        return $this->statement;
-    }
-    public function get_committee() : Committee
-    {
-        return $this->committee;
+        return $this->committees;
     }
 
 }

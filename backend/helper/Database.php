@@ -1,0 +1,180 @@
+<?php
+
+namespace CandidateGallery\helper;
+
+use CandidateGallery\Board;
+use CandidateGallery\Candidate;
+use CandidateGallery\Gallery;
+
+class Database
+{
+
+    public static function get_gallery(int $id) : Response
+    {
+        global $wpdb;
+        $res = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "gc_gallery WHERE id = " . $id);
+        if(count($res) === 1) {
+            return new Response(true, new Gallery(intval($res[0]["id"]), $res[0]["name"], $res[0]["type"]));
+        }
+        return new Response(false, "Database Error");
+    }
+
+    public static function add_gallery(Gallery $gallery) : Response
+    {
+        global $wpdb;
+        $wpdb->insert($wpdb->prefix . "gc_gallery", array('name' => $gallery->get_name(), 'type' => $gallery->get_type()));
+        $gallery->set_id($wpdb->insert_id);
+        self::add_pictures($gallery);
+        return new Response(true, $gallery->get_id());
+    }
+
+    public static function edit_gallery(Gallery $gallery) : Response
+    {
+        global $wpdb;
+
+        $wpdb->update($wpdb->prefix . "gc_gallery", array('name' => $gallery->get_name(), 'type' => $gallery->get_type()), array("id" => $gallery->get_id()));
+        self::edit_pictures($gallery);
+        return new Response(true, "");
+    }
+
+    public static function add_pictures(Gallery $gallery) : void
+    {
+        array_walk($gallery->get_pictures(), function ($picture) use ($gallery) {
+           $gallery->get_type() === "candidates" ? self::add_candidate_picture($gallery->get_id(), $picture) : self::add_board_picture($gallery->get_id(), $picture);
+        });
+    }
+
+    public static function edit_pictures(Gallery $gallery) : void
+    {
+        array_walk($gallery->get_pictures(), function ($picture) use ($gallery) {
+            $gallery->get_type() === "candidates" ? self::edit_candidate_picture($picture) : self::edit_board_picture($picture);
+        });
+    }
+
+    public static function add_board_picture(int $gallery_id, Board $picture) : void
+    {
+        global $wpdb;
+
+        $wpdb->insert($wpdb->prefix . "gc_picture", array(
+            "gallery_id" => $gallery_id,
+            "name" => $picture->get_name(),
+            "picture" => $picture->get_picture(),
+            "statement" => $picture->get_statement(),
+            "email" => $picture->get_encrypted_email(),
+            "function" => $picture->get_function()
+        ));
+    }
+
+    public static function edit_board_picture(Board $picture) : void {
+        global $wpdb;
+
+        if(count($wpdb->select($wpdb->prefix . "gc_picture", array("id" => $picture->get_id()))) === 1)
+        {
+
+        }
+    }
+
+    public static function add_candidate_picture(int $gallery_id, Candidate $picture) : void
+    {
+        global $wpdb;
+
+        $wpdb->insert($wpdb->prefix . "gc_candidate_picture", array(
+            "gallery_id" => $gallery_id,
+            "name" => $picture->get_name(),
+            "picture" => $picture->get_picture(),
+            "statement" => $picture->get_statement(),
+            "email" => $picture->get_email(),
+            "function" => $picture->get_function(),
+            "age" => $picture->get_age(),
+            "job" => $picture->get_job(),
+            "family" => $picture->get_family(),
+            "children" => $picture->get_children(),
+            "grandchildren" => $picture->get_grandchildren()
+        ));
+
+        $id = $wpdb->insert_id;
+
+        foreach($picture->get_committees() as $committee)
+        {
+            self::add_committee($id, $committee);
+        }
+    }
+
+    public static function add_committee(int $picture_id, Committee $committee) : void
+    {
+        global $wpdb;
+
+        $wpdb->insert($wpdb->prefix . "gc_committee", array(
+            "picture_id" => $picture_id,
+            "type" => $committee->get_type(),
+            "active" => intval($committee->is_active()),
+            "position" => $committee->get_position(),
+            "district" => $committee->get_district()
+        ));
+    }
+
+    public static function initialize() : void
+    {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE `{$wpdb->base_prefix}gc_gallery` (
+            id int NOT NULL,
+            name varchar (255) NOT NULL,
+            type varchar (155) NOT NULL,
+            PRIMARY KEY (id)   
+        ) $charset_collate;";
+        $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_committee` (
+            id int NOT NULL,
+            type varchar (155) NOT NULL,
+            active tinyint (4) NOT NULL,
+            position int NOT NULL,
+            district varchar (255),
+            PRIMARY KEY (id)      
+        ) $charset_collate;";
+        $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_picture` (
+            id int NOT NULL,
+            gallery_id int NOT NULL,
+            name varchar (255) NOT NULL,
+            picture varchar (255) NOT NULL,
+            statement text NOT NULL,
+            email varchar (255) NOT NULL,
+            function varchar (255) NOT NULL,
+            PRIMARY KEY (id)      
+        ) $charset_collate;";
+        $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_candidate_picture` (
+            id int NOT NULL,
+            gallery_id int NOT NULL,
+            committee_id int NOT NULL,
+            name varchar (255) NOT NULL,
+            picture varchar (255) NOT NULL,
+            statement text NOT NULL,
+            email varchar (255) NOT NULL,
+            function varchar (255) NOT NULL,
+            age int NOT NULL,
+            job varchar (255) NOT NULL,
+            family varchar (255) NOT NULL,
+            children int NOT NULL,
+            grandchildren int NOT NULL,
+            PRIMARY KEY (id)      
+        ) $charset_collate;";
+
+        require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+
+    }
+
+    public static function remove() : void
+    {
+        global $wpdb;
+        array_map(function ($el) use ($wpdb) {
+           $wpdb->query("DROP TABLE IF EXISTS " . $wpdb->base_prefix . $el);
+        }, [
+            "gc_gallery",
+            "gc_committee",
+            "gc_picture",
+            "gc_candidate_picture"
+        ]);
+    }
+
+}
