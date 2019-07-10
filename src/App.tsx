@@ -14,8 +14,8 @@ export default class App extends Component<AppProps>
     render()
     {
         return (
-            <div>
-                <h1>Add new Gallery</h1>
+            <div className="cg_box">
+                <h1 className="cg_title">Add new Gallery</h1>
                 <NameForm />
             </div>
         )

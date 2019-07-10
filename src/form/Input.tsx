@@ -29,7 +29,7 @@ export default class Input extends Component<InputProps>
 		console.log("PropsValue:");
 		console.log(this.props.value);
 		return (
-			<input id={this.props.id} type={this.props.type} className="form-control" required placeholder={this.props.placeholder} onChange={this.update} value={this.props.value} />
+			<input id={this.props.id} type={this.props.type} className="form-control cg_input" required placeholder={this.props.placeholder} onChange={this.update} value={this.props.value} />
 		);
 	}
 

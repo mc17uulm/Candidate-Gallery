@@ -29,7 +29,7 @@ module.exports = {
     },
     output: {
         filename: "add.js",
-        path: resolve(__dirname, "dist/")
+        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"]

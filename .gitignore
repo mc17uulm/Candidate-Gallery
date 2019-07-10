@@ -1,8 +1,8 @@
-data/
 .idea/
 test.php
-theme/
-vendor/
+wordpress/
 .vscode/
 node_modules/
-dist/
+!wordpress/wp-content/plugins/CandidateGallery/
+wordpress/wp-content/plugins/CandidateGallery/dist/
+wordpress/wp-content/plugins/CandidateGallery/vendor/

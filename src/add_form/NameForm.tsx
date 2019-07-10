@@ -1,6 +1,8 @@
 import React, {Component, FormEvent} from "react";
 import FormGroup from "../form/FormGroup";
 import Input from "../form/Input";
+import ImageButton from "../form/ImageButton";
+import ImageForm from "../form/ImageForm";
 
 interface NameFormProps {
 
@@ -43,11 +45,15 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<FormGroup>
-					<label>Gallery Name:</label>
+					<label className="cg_label">Gallery Name:</label>
 					<Input id="gallery_name" type="text" value={this.state.gallery_name} placeholder="Gallery Name" update={this.update}/>
 				</FormGroup>
 				<FormGroup>
-					<label>Type:</label>
+					<label className="cg_label">Type:</label>
+					<Input id="gallery_type" type="text" value="" placeholder="Select Gallery Type" update={this.update} />
+				</FormGroup>
+				<FormGroup>
+					<ImageForm />
 				</FormGroup>
 			</form>
 		);

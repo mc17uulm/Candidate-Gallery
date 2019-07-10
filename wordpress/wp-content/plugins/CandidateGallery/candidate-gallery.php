@@ -43,6 +43,11 @@ function cg_activate()
 function cg_load_admin_scripts()
 {
     wp_enqueue_script('cg_add_render', plugins_url('dist/add.js', __FILE__), array(), false, true);
+    wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');
+    if (is_admin())
+    {
+        wp_enqueue_media();
+    }
 }
 
 function cg_page()
