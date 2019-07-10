@@ -1,7 +1,9 @@
 import React, {Component} from "react";
+import Image from "./Image";
 
 interface ImageGalleryProps {
-	images: any[]
+	images: any[],
+	onDelete: (id: number) => void
 }
 
 export default class ImageGallery extends Component<ImageGalleryProps>
@@ -16,11 +18,11 @@ export default class ImageGallery extends Component<ImageGalleryProps>
 	{
 		return (
 			<div className="cg_gallery_container">
-				{this.props.images.map(image => (
-					<div className="cg_image_container">		
-						<img className="cg_image" src={image.url}/>
-					</div>
-				))}
+				{this.props.images.length > 0 ? this.props.images.map(image => (		
+					<Image id={image.id} url={image.url} onDelete={this.props.onDelete} />
+				)) : (
+					<span className="cg_gallery_container_info">No files selected</span>
+				)}
 			</div>
 		);
 	}

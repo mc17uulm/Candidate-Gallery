@@ -3,6 +3,7 @@ import FormGroup from "../form/FormGroup";
 import Input from "../form/Input";
 import ImageButton from "../form/ImageButton";
 import ImageForm from "../form/ImageForm";
+import Select from "../form/Select";
 
 interface NameFormProps {
 
@@ -50,7 +51,8 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				</FormGroup>
 				<FormGroup>
 					<label className="cg_label">Type:</label>
-					<Input id="gallery_type" type="text" value="" placeholder="Select Gallery Type" update={this.update} />
+					{/* <Input id="gallery_type" type="text" value="" placeholder="Select Gallery Type" update={this.update} /> */}
+					<Select></Select>
 				</FormGroup>
 				<FormGroup>
 					<ImageForm />

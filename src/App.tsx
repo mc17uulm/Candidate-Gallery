@@ -17,6 +17,7 @@ export default class App extends Component<AppProps>
             <div className="cg_box">
                 <h1 className="cg_title">Add new Gallery</h1>
                 <NameForm />
+                <button className="cg_button">Save</button>
             </div>
         )
     }
