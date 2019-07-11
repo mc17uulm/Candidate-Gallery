@@ -1,12 +1,15 @@
 import React, {Component} from "react";
-import Image from "./Image";
+import {SortableContainer} from "react-sortable-hoc";
+import Image, { GalleryImage } from "./Image";
+import { GalleryType } from "../add_form/NameForm";
 
 interface ImageGalleryProps {
-	images: any[],
+	images: GalleryImage[],
+	type: GalleryType,
 	onDelete: (id: number) => void
 }
 
-export default class ImageGallery extends Component<ImageGalleryProps>
+class ImageGallery extends Component<ImageGalleryProps>
 {
 
 	constructor(props: ImageGalleryProps)
@@ -18,8 +21,9 @@ export default class ImageGallery extends Component<ImageGalleryProps>
 	{
 		return (
 			<div className="cg_gallery_container">
-				{this.props.images.length > 0 ? this.props.images.map(image => (		
-					<Image id={image.id} url={image.url} onDelete={this.props.onDelete} />
+				{this.props.images.length > 0 ? this.props.images.map((image, index) => (		
+						<Image type={this.props.type} index={index} key={`image-${index}`} id={image.id} url={image.url} onDelete={this.props.onDelete} />
+						
 				)) : (
 					<span className="cg_gallery_container_info">No files selected</span>
 				)}
@@ -28,3 +32,5 @@ export default class ImageGallery extends Component<ImageGalleryProps>
 	}
 
 }
+
+export default SortableContainer(ImageGallery);

@@ -15,9 +15,9 @@ export default class FormGroup extends Component<FormGroupProps>
 	render()
 	{
 		return (
-			<fieldset className="form-group">
+			<div className="form-group">
 				{this.props.children}
-			</fieldset>
+			</div>
 		);
 	}
 
