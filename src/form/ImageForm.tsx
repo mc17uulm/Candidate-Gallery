@@ -1,15 +1,15 @@
 import React, {Component} from "react";
 import ImageButton from "./ImageButton";
 import ImageGallery from "./ImageGallery";
-import { GalleryImage } from "./Image";
 import arrayMove from "array-move";
-import { GalleryType } from "../add_form/NameForm";
+import Candidate from "../classes/Candidate";
 
 interface ImageFormProps {
 	id: string,
-	images: GalleryImage[],
-	type: GalleryType,
-	update: (id: string, value: GalleryImage[]) => void
+	images: Candidate[],
+	type: string,
+	update: (id: string, value: Candidate[]) => void,
+	updateImage: (id: string, value: any, index: number) => void
 }
 
 export default class ImageForm extends Component<ImageFormProps>
@@ -24,7 +24,7 @@ export default class ImageForm extends Component<ImageFormProps>
 		this.onSortEnd = this.onSortEnd.bind(this);
 	}
 
-	addImage(image: GalleryImage)
+	addImage(image: Candidate)
 	{
 		let images = this.props.images;
 		images.push(image);
@@ -48,7 +48,7 @@ export default class ImageForm extends Component<ImageFormProps>
 		return (
 			<div>
 				<ImageButton add={this.addImage} />
-				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd}/>
+				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage}/>
 			</div>
 		);
 	}

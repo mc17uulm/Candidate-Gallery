@@ -1,10 +1,10 @@
 import React, {Component, MouseEvent} from "react";
-import { GalleryImage } from "./Image";
+import Candidate from "../classes/Candidate";
 
 declare var wp: any;
 
 interface ImageButtonProps {
-	add: (image: GalleryImage) => void
+	add: (image: Candidate) => void
 }
 
 export default class ImageButton extends Component<ImageButtonProps>
@@ -23,11 +23,13 @@ export default class ImageButton extends Component<ImageButtonProps>
 		if(typeof wp !== 'undefined' && wp.media && wp.media.editor)
 		{
 			wp.media.editor.send.attachment = (props: any, attachment: any) => {
-				this.props.add({url: attachment.url, id: attachment.id});
-			}
-			wp.media.editor.open(document.getElementById('cg_set_images'));
-			return false;
+				this.props.add(new Candidate(attachment.url, attachment.id));
+			};
 		}
+
+		wp.media.editor.open(document.getElementById('cg_set_images'));
+		return false;
+		
 	}
 
 	render()

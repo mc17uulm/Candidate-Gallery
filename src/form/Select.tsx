@@ -1,48 +1,55 @@
 import React, {Component, ChangeEvent} from "react";
-import { GalleryType } from "../add_form/NameForm";
+import shortid from "shortid";
+
+export type SelectValue = {
+	key: string,
+	value: string
+}
 
 interface SelectProps {
 	id: string,
-	update: (id: string, value: GalleryType) => void
+	options: SelectValue[],
+	small?: boolean,
+	update: (id: string, value: string) => void
 }
 
-export default class Select extends Component<SelectProps>
+interface SelectState {
+	value: string
+}
+
+export default class Select extends Component<SelectProps, SelectState>
 {
+
+	static defaultProps = {
+		small: false
+	}
 
 	constructor(props: SelectProps)
 	{
 		super(props);
 
+		this.state = {
+			value: this.props.options[0].value || ""
+		}
+
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	handleChange(e: ChangeEvent<HTMLSelectElement>)
+	async handleChange(e: ChangeEvent<HTMLSelectElement>)
 	{
-		let type : GalleryType;
-		switch(e.target.value)
-		{
-			case "delegates": type = GalleryType.Delegates;
-				break;
-			case "candidates": type = GalleryType.Candidates;
-				break;
-			case "mandates": type = GalleryType.Mandates;
-				break;	
-			case "board": 
-			default:
-				type = GalleryType.Board;
-				break;	
-		}
-		this.props.update(this.props.id, type);
+		this.setState({
+			value: e.target.value
+		});
+		this.props.update(this.props.id, e.target.value);
 	}
 
 	render()
 	{
 		return (
-			<select className="form-control cg_input" onChange={this.handleChange}>
-				<option value={GalleryType.Board}>Vorstand</option>
-				<option value={GalleryType.Delegates}>Delegierte</option>
-				<option value={GalleryType.Candidates}>Kandidat*innen</option>
-				<option value={GalleryType.Mandates}>Mandatsträger*innen</option>
+			<select className={"form-control cg_input" + (this.props.small ? " cg_sm" : "")} onChange={this.handleChange} value={this.state.value}>
+				{this.props.options.map((option: SelectValue) => (
+					<option key={shortid.generate()} value={option.key}>{option.value}</option>
+				))}
 			</select>
 		);
 	}
