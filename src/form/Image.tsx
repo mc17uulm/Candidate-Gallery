@@ -67,7 +67,7 @@ class Image extends Component<ImageProps>
 					<Textarea id="statement" small placeholder="Statement" value={this.props.image.statement} update={this.props.update} />
 					{this.props.type === "candidates" ? (
 						<div>
-							<Input id="job" type="text" small placeholder="Beruf..." value={this.props.image.name} update={this.props.update} />
+							<Input id="job" type="text" small placeholder="Beruf..." value={this.props.image.job} update={this.props.update} />
 							<Input id="age" type="number" small placeholder="Alter..." value={this.props.image.age} update={this.props.update} />
 							<Input id="children" type="number" small placeholder="Kinder..." value={this.props.image.children} update={this.props.update} />
 							<Input id="grandchildren" type="number" small placeholder="Enkelkinder..." value={this.props.image.grandchildren} update={this.props.update} />

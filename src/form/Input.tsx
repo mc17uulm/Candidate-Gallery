@@ -1,5 +1,10 @@
 import React, {Component, ChangeEvent} from "react";
 
+export class InputObject<T> {
+	value: T;
+	error: Error;
+}
+
 export type Error = {
 	active: boolean,
 	msg?: string
@@ -7,12 +12,11 @@ export type Error = {
 
 interface InputProps {
 	id: string,
-	value: string | number,
+	value: InputObject<any>,
 	type: "email" | "text" | "number",
 	placeholder: string,
 	small?: boolean,
 	required?: boolean,
-	error?: Error,
 	update: (id: string, value: string) => void
 }
 
@@ -45,9 +49,9 @@ export default class Input extends Component<InputProps>
 	{
 		return (
 			<div className="cg_input_wrapper">
-				{this.props.error.active ? (<span className="cg_error_indicator"></span>) : ""}
-				<input id={this.props.id} type={this.props.type} className={"form-control cg_input" + (this.props.small ? " cg_sm" : "") + (this.props.error.active ? " cg_errro" : "")} required={this.props.required} placeholder={this.props.placeholder} onChange={this.update} value={this.props.value} />
-				{this.props.error.active ? (<span className="cg_error_info">{this.props.error.msg}</span>) : ""}
+				{this.props.value.error.active ? (<span className="cg_error_indicator"></span>) : ""}
+				<input id={this.props.id} type={this.props.type} className={"form-control cg_input" + (this.props.small ? " cg_sm" : "") + (this.props.value.error.active ? " cg_error" : "")} required={this.props.required} placeholder={this.props.placeholder} onChange={this.update} value={this.props.value.value} />
+				{this.props.value.error.active ? (<span className="cg_error_info">{this.props.value.error.msg}</span>) : ""}
 			</div>
 		);
 	}

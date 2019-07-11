@@ -1,10 +1,11 @@
 import React, {Component, ChangeEvent} from "react";
+import { InputObject } from "./Input";
 
 interface TextareaProps {
 	small?: boolean,
 	id: string,
 	placeholder: string,
-	value: string,
+	value: InputObject<any>,
 	update: (id: string, value: string) => void
 }
 
@@ -31,8 +32,11 @@ export default class Textarea extends Component<TextareaProps>
 	render()
 	{
 		return (
-			<textarea className={"form-control cg_textarea" + (this.props.small ? " cg_sm" : "")} placeholder={this.props.placeholder} onChange={this.handleChange} value={this.props.value}>
-			</textarea>	
+			<div>
+				<textarea className={"form-control cg_textarea" + (this.props.small ? " cg_sm" : "") + (this.props.value.error.active ? " cg_error" : "")} placeholder={this.props.placeholder} onChange={this.handleChange} value={this.props.value.value}>
+				</textarea>	
+				{this.props.value.error.active ? (<span className="cg_error_info">{this.props.value.error.msg}</span>) : ""}
+			</div>
 		);
 	}
 

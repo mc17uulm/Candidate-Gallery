@@ -1,6 +1,7 @@
 import React, {Component, FormEvent} from "react";
+import validator from "email-validator";
 import FormGroup from "../form/FormGroup";
-import Input, { Error } from "../form/Input";
+import Input, { InputObject } from "../form/Input";
 import ImageForm from "../form/ImageForm";
 import Select from "../form/Select";
 import Candidate from "../classes/Candidate";
@@ -8,8 +9,7 @@ import Candidate from "../classes/Candidate";
 interface NameFormProps {}
 
 interface NameFormState {
-	gallery: string,
-	gallery_error: Error,
+	gallery: InputObject<string>,
 	type: string,
 	images: Candidate[]
 }
@@ -24,32 +24,15 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.handleSubmit = this.handleSubmit.bind(this);
 
 		this.state = {
-			gallery: "",
-			gallery_error: {active: false},
+			gallery: {value: "", error: {active: false}},
 			type: "board",
-			images: [{
-				url: "http://localhost:8000/wp-content/uploads/2019/07/64928238_2185936344788204_8829693217084538880_o.jpg",
-				id: 1,
-				name: "",
-				email: "",
-				func: "",
-				statement: "",
-				job: "",
-				age: null,
-				children: null,
-				grandchildren: null
-			}, {
-				url: "http://localhost:8000/wp-content/uploads/2019/07/action-astronomy-constellation-1274260.jpg",
-				id: 2,
-				name: "",
-				email: "",
-				func: "",
-				statement: "",
-				job: "",
-				age: null,
-				children: null,
-				grandchildren: null
-			}]
+			images: [
+				new Candidate(
+					1, "http://localhost:8000/wp-content/uploads/2019/07/64928238_2185936344788204_8829693217084538880_o.jpg", "", "", "", ""
+				), new Candidate(
+					2, "http://localhost:8000/wp-content/uploads/2019/07/action-astronomy-constellation-1274260.jpg", "", "", "", ""
+				)
+			]
 		}
 
 		this.update = this.update.bind(this);
@@ -64,6 +47,12 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 	update(id: string, value: any)
 	{
+		if(typeof this.state[id] === "object")
+		{
+			console.log("hieer");
+			value = {value: value, error: {active: false, msg: ""}};
+		}
+
 		this.setState({
 			[id]: value
 		} as Pick<NameFormState, keyof NameFormState>);
@@ -73,7 +62,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 	{
 		let images = this.state.images.map((image: Candidate, i: number) => {
 			if(i === index) {
-				image[id] = value;
+				image[id] = {value: value, error: {active: false, msg: ""}};
 			}
 			return image;
 		});
@@ -86,11 +75,17 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 		let correct : boolean = true;
 
-		if(this.state.gallery === "") { correct = false; this.setState({gallery_error: {active: true, msg: "Bitte gib der Gallery einen Namen!"}})};
+		if(this.state.gallery.value === "") { correct = false; this.setState({gallery: {value: "", error: {active: true, msg: "Bitte gib der Gallery einen Namen!"}}})};
 
 		let images = this.state.images.map((image: Candidate) => {
-			
+			if(image.name.value === "") {correct = false; image.name = {value: "", error: {active: true, msg: "Bitte gib den Namen der Person an!"}}};
+			if(image.email.value === "") {correct = false; image.email = {value: "", error: {active: true, msg: "Bitte gib die E-Mail-Adresse der Person an!"}}};
+			if(!validator.validate(image.email.value)) {correct = false; image.email = {value: image.email.value, error: {active: true, msg: "Bitte gib die gültige E-Mail-Adresse der Person an!"}}};
+
+			return image;
 		});
+
+		this.setState({images: images});
 
 		if(!correct) {
 			return;
@@ -105,7 +100,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			<form onSubmit={this.handleSubmit}>
 				<FormGroup>
 					<label className="cg_label">Gallery Name:</label>
-					<Input id="gallery" type="text" value={this.state.gallery} error={this.state.gallery_error} placeholder="Gallery Name" update={this.update}/>
+					<Input id="gallery" type="text" value={this.state.gallery} placeholder="Gallery Name" update={this.update}/>
 				</FormGroup>
 				<FormGroup>
 					<label className="cg_label">Type:</label>
