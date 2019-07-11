@@ -20,8 +20,7 @@ services:
       - "8000:80"
     restart: always
     volumes:
-      - .:/var/www/html/wp-content/plugins/CandidateGallery/
-      - ./theme/:/var/www/html/wp-content/themes/
+      - ./wordpress/wp-content/:/var/www/html/wp-content
     stdin_open: true
     tty: true
     environment:
