@@ -23,8 +23,7 @@ require_once 'vendor/autoload.php';
 use CandidateGallery\App;
 use CandidateGallery\helper\Database;
 use CandidateGallery\API;
-use CandidateGallery\views\AddGallery;
-use CandidateGallery\views\Gallery;
+use CandidateGallery\View;
 
 function cg_initialize()
 {
@@ -43,30 +42,39 @@ function cg_activate()
 
 function cg_load_admin_scripts()
 {
-    wp_enqueue_script('cg_add_render', plugins_url('dist/add.js', __FILE__), array(), false, true);
 
-    wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');
-    if (is_admin())
+    if(in_array($_GET["page"], array('cg_add_gallery', 'cg_edit_gallery', 'candidate-gallery')))
     {
-        wp_enqueue_media();
+        wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');
+
+        if (is_admin())
+        {
+            wp_enqueue_script('cg_backend_render', plugins_url('dist/CandidateGallery.js', __FILE__), array('wp-i18n'), false, true);
+            wp_localize_script('cg_backend_render', 'cg_vars', array(
+                'site' => $_GET["page"],
+                'ajax' => admin_url('admin-ajax.php')
+            ));
+            wp_enqueue_media();
+        }
     }
+
 }
 
-function cg_page()
+function cg_load_plugin_textdomain()
 {
-    Gallery::render();
+    load_plugin_textdomain('cg_lang', FALSE, basename(dirname(__FILE__)) . '/lang/');
 }
 
-function cg_add_gallery_page()
+function cg_render_page()
 {
-    AddGallery::render();
+    View::render();
 }
 
 function cg_menu()
 {
-    $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", "cg_page", "dashicons-admin-network");
-    add_submenu_page('candidate-gallery', 'Add Gallery', 'Add Gallery', 'manage_options', 'cg_add_gallery', 'cg_add_gallery_page');
-    //add_action('load-' . $page, )
+    $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", "cg_render_page", "dashicons-admin-network");
+    add_submenu_page('candidate-gallery', 'Add Gallery', 'Add Gallery', 'manage_options', 'cg_add_gallery', 'cg_render_page');
+    add_submenu_page('candidate-gallery', 'Edit Gallery', 'Edit Gallery', 'manage_options', 'cg_edit_gallery', 'cg_render_page');
 }
 
 function cg_ajax()
@@ -174,4 +182,7 @@ add_action('admin_enqueue_scripts', 'cg_load_admin_scripts');
 add_shortcode('candidate_gallery', 'cg_shortcode');
 add_action('admin_menu', 'cg_menu');
 
+add_action('wp_ajax_nopriv_cg_ajax', "cg_ajax");
 add_action('wp_ajax_cg_ajax', 'cg_ajax');
+
+add_action('plugins_loaded', 'cg_load_plugin_textdomain');

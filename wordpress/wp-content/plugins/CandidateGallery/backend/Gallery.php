@@ -2,11 +2,10 @@
 
 namespace CandidateGallery;
 
-use CandidateGallery\helper\Committee;
 use CandidateGallery\helper\Database;
 use CandidateGallery\helper\Response;
 
-class Gallery
+class Gallery implements \JsonSerializable
 {
 
     private $id;
@@ -14,9 +13,9 @@ class Gallery
     private $type;
     private $pictures;
 
-    public function __construct(string $name, int $id = -1, string $type = "board", array $pictures = array())
+    public function __construct(string $name, string $type = "board", array $pictures = array())
     {
-        $this->id = $id;
+        $this->id = -1;
         $this->name = $name;
         $this->type = $type;
         $this->pictures = $pictures;
@@ -57,57 +56,34 @@ class Gallery
         $this->pictures = $pictures;
     }
 
-    public static function handle_action(string $action, int $id, array $data) : Response
+    public function jsonSerialize()
     {
-        switch($action)
+        return get_object_vars($this);
+    }
+
+    public static function get_gallery(array $data) : Response
+    {
+        if(!empty($data["id"]) && is_int(intval($data["id"])))
         {
-            case "add":
-                return self::add_gallery($data);
-            case "edit":
-                self::edit_gallery($id, $data);
-                break;
-            case "delete":
-                self::remove_gallery($id);
-                break;
-            default:
-                break;
+            return Database::get_gallery(intval($data["id"]));
         }
-        return new Response(false, "Internal Server Error");
+
+        return new Response(false, "Invalid parameters");
     }
 
     public static function add_gallery(array $data) : Response
     {
+
         $gallery = new Gallery($data["name"], $data["type"]);
-        foreach($data["pictures"] as $picture)
+        foreach($data["images"] as $image)
         {
-            $committees = array_map(function (array $committee) {
-                return new Committee(
-                    $committee["type"],
-                    $committee["active"],
-                    $committee["position"],
-                    $committee["district"],
-                );
-            }, $picture["committees"]);
-            $gallery->set_picture($data["type"] === "candidates" ? new Candidate(
-                $picture["name"],
-                $picture["picture"],
-                $picture["position"],
-                $picture["email"],
-                $picture["function"],
-                $picture["age"],
-                $picture["job"],
-                $picture["family"],
-                $picture["children"],
-                $picture["grandchildren"],
-                $picture["statement"],
-                $committees
-            ) : new Board(
-                $picture["name"],
-                $picture["picture"],
-                $picture["position"],
-                $picture["email"],
-                $picture["function"],
-                $picture["statement"]
+            $gallery->set_picture(new Board(
+                $image["name"],
+                $image["url"],
+                $image["position"],
+                $image["email"],
+                $image["func"],
+                $image["statement"]
             ));
         }
 

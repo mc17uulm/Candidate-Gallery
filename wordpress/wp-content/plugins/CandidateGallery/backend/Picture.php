@@ -2,7 +2,7 @@
 
 namespace CandidateGallery;
 
-class Picture
+class Picture implements \JsonSerializable
 {
 
     private $id;
@@ -10,9 +10,9 @@ class Picture
     private $picture;
     private $position;
 
-    public function __construct(string $name, string $picture, int $position, int $id = -1)
+    public function __construct(string $name, string $picture, int $position)
     {
-        $this->id = $id;
+        $this->id = -1;
         $this->name = $name;
         $this->picture = $picture;
         $this->position = $position;
@@ -41,6 +41,11 @@ class Picture
     public function get_position() : int
     {
         return $this->position;
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 
 }

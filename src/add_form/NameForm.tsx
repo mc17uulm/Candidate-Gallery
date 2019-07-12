@@ -1,17 +1,26 @@
-import React, {Component, FormEvent} from "react";
+import React, {Component, FormEvent, ReactNode, MouseEvent} from "react";
 import validator from "email-validator";
 import FormGroup from "../form/FormGroup";
 import Input, { InputObject } from "../form/Input";
 import ImageForm from "../form/ImageForm";
 import Select from "../form/Select";
 import Candidate from "../classes/Candidate";
+import APIHandler from "../classes/APIHandler";
+import Response from "../classes/Response";
+import Icon from "../form/Icon";
+import Button from "../form/Button";
+import HelpText from "../form/HelpText";
 
-interface NameFormProps {}
+interface NameFormProps {
+	gallery_id?: number
+}
 
 interface NameFormState {
 	gallery: InputObject<string>,
 	type: string,
-	images: Candidate[]
+	images: Candidate[],
+	button: ReactNode,
+	help: ReactNode
 }
 
 export default class NameForm extends Component<NameFormProps, NameFormState>
@@ -26,18 +35,36 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.state = {
 			gallery: {value: "", error: {active: false}},
 			type: "board",
-			images: [
-				new Candidate(
-					1, "http://localhost:8000/wp-content/uploads/2019/07/64928238_2185936344788204_8829693217084538880_o.jpg", "", "", "", ""
-				), new Candidate(
-					2, "http://localhost:8000/wp-content/uploads/2019/07/action-astronomy-constellation-1274260.jpg", "", "", "", ""
-				)
-			]
+			images: [],
+			button: "Speichern",
+			help: ""
 		}
 
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
 		this.save = this.save.bind(this);
+	}
+
+	async componentWillMount()
+	{
+		if(this.props.gallery_id)
+		{
+			let resp : Response = await APIHandler.post("get_gallery", {id: this.props.gallery_id});
+			
+			if(resp.hasSuccess())
+			{
+				let data = resp.getData();
+				this.setState({
+					gallery: {value: data["name"], error: {active: false, msg: ""}},
+					type: data["type"],
+					images: data["pictures"].map(image => {
+						let c = new Candidate(image.id, image.picture, image.name);
+						c.position = image.position;
+						return c;
+					})
+				});
+			}
+		}
 	}
 
 	handleSubmit(e: FormEvent)
@@ -47,9 +74,8 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 	update(id: string, value: any)
 	{
-		if(typeof this.state[id] === "object")
+		if(typeof this.state[id] === "object" && typeof this.state[id].value !== "undefined")
 		{
-			console.log("hieer");
 			value = {value: value, error: {active: false, msg: ""}};
 		}
 
@@ -62,7 +88,11 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 	{
 		let images = this.state.images.map((image: Candidate, i: number) => {
 			if(i === index) {
-				image[id] = {value: value, error: {active: false, msg: ""}};
+				if(id === "url") {
+					image.url = value;
+				} else {
+					image[id] = {value: value, error: {active: false, msg: ""}};
+				}
 			}
 			return image;
 		});
@@ -71,7 +101,9 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		});
 	}
 
-	save() {
+	async save(e: MouseEvent) {
+
+		await this.setState({button: (<span><Icon type="image-rotate" spin /> Speichern...</span>)})
 
 		let correct : boolean = true;
 
@@ -79,8 +111,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 		let images = this.state.images.map((image: Candidate) => {
 			if(image.name.value === "") {correct = false; image.name = {value: "", error: {active: true, msg: "Bitte gib den Namen der Person an!"}}};
-			if(image.email.value === "") {correct = false; image.email = {value: "", error: {active: true, msg: "Bitte gib die E-Mail-Adresse der Person an!"}}};
-			if(!validator.validate(image.email.value)) {correct = false; image.email = {value: image.email.value, error: {active: true, msg: "Bitte gib die gültige E-Mail-Adresse der Person an!"}}};
+			if(image.email.value !== "" && !validator.validate(image.email.value)) {correct = false; image.email = {value: image.email.value, error: {active: true, msg: "Bitte gib die gültige E-Mail-Adresse der Person an!"}}};
 
 			return image;
 		});
@@ -88,10 +119,23 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.setState({images: images});
 
 		if(!correct) {
+			await this.setState({button: "Speichern"});
 			return;
 		}
 
-		console.log("Success");
+		let data : object = {
+			name: this.state.gallery.value,
+			type: this.state.type,
+			images: this.state.images.map((image: Candidate, index: number) => {
+				return image.parse(index);
+			})
+		};
+
+		let response : Response = await APIHandler.post("add_gallery", data);
+
+		let help : ReactNode = response.hasSuccess() ? "Galerie erfolgreich gespeichert" : "Fehler beim Speichern";
+
+		await this.setState({button: "Speichern", help: help});
 	}
 
 	render()
@@ -104,12 +148,16 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				</FormGroup>
 				<FormGroup>
 					<label className="cg_label">Type:</label>
-					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "candidates", value: "Kandidat*innen"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
+					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
 				</FormGroup>
 				<FormGroup>
 					<ImageForm type={this.state.type} id="images" images={this.state.images} update={this.update} updateImage={this.updateImage} />
 				</FormGroup>
-				<button className="cg_button" onClick={this.save}>Save</button>
+				<div className="cg_button_group">
+					<Button color="green" callback={this.save} >{this.state.button}</Button> 
+					<HelpText>{this.state.help}</HelpText>
+				</div>
+
 			</form>
 		);
 	}

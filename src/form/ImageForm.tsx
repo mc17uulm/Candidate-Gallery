@@ -1,8 +1,10 @@
-import React, {Component} from "react";
+import React, {Component, MouseEvent} from "react";
 import ImageButton from "./ImageButton";
 import ImageGallery from "./ImageGallery";
 import arrayMove from "array-move";
 import Candidate from "../classes/Candidate";
+import Button from "./Button";
+import ButtonGroup from "./ButtonGroup";
 
 interface ImageFormProps {
 	id: string,
@@ -43,12 +45,20 @@ export default class ImageForm extends Component<ImageFormProps>
 		this.props.update(this.props.id, images);
 	}
 
+	addData(e: MouseEvent)
+	{
+
+	}
+
 	render()
 	{
 		return (
 			<div>
-				<ImageButton add={this.addImage} />
-				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage}/>
+				<ButtonGroup>
+					<ImageButton add={this.addImage} />
+					<Button callback={this.addData}>Add Data</Button>
+				</ButtonGroup>
+				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage} addImage={this.addImage}/>
 			</div>
 		);
 	}

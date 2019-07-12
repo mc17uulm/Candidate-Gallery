@@ -14,9 +14,28 @@ class Database
         global $wpdb;
         $res = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "gc_gallery WHERE id = " . $id);
         if(count($res) === 1) {
-            return new Response(true, new Gallery(intval($res[0]["id"]), $res[0]["name"], $res[0]["type"]));
+            $gallery = new Gallery($res[0]->name, $res[0]->type);
+            $gallery->set_id($id);
+            $gallery->set_pictures(self::get_pictures($id));
+            return new Response(true, $gallery->jsonSerialize());
         }
         return new Response(false, "Database Error");
+    }
+
+    public function get_galleries() : Response
+    {
+        global $wpdb;
+        $res = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "gc_gallery");
+        if(count($res) > 0)
+        {
+            foreach($res as &$gallery)
+            {
+                $gallery->pictures = $wpdb->get_results("SELECT picture FROM " . $wpdb->prefix . "gc_picture WHERE gallery_id = " . $gallery->id);
+            }
+
+            return new Response(true, $res);
+        }
+        return new Response(false, "");
     }
 
     public static function add_gallery(Gallery $gallery) : Response
@@ -35,6 +54,33 @@ class Database
         $wpdb->update($wpdb->prefix . "gc_gallery", array('name' => $gallery->get_name(), 'type' => $gallery->get_type()), array("id" => $gallery->get_id()));
         self::edit_pictures($gallery);
         return new Response(true, "");
+    }
+
+    public static function get_pictures(int $gallery_id) : array
+    {
+        global $wpdb;
+
+        $out = array();
+
+        $res = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "gc_picture WHERE gallery_id = " . $gallery_id);
+        if(count($res) > 0)
+        {
+            foreach($res as $picture)
+            {
+                $image = new Board(
+                    $picture->name,
+                    $picture->picture,
+                    $picture->position,
+                    $picture->email,
+                    $picture->function,
+                    $picture->statement
+                );
+                $image->set_id($picture->id);
+                array_push($out, $image);
+            }
+        }
+
+        return $out;
     }
 
     public static function add_pictures(Gallery $gallery) : void
@@ -61,7 +107,8 @@ class Database
             "picture" => $picture->get_picture(),
             "statement" => $picture->get_statement(),
             "email" => $picture->get_encrypted_email(),
-            "function" => $picture->get_function()
+            "function" => $picture->get_function(),
+            "position" => $picture->get_position()
         ));
     }
 
@@ -119,13 +166,13 @@ class Database
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE `{$wpdb->base_prefix}gc_gallery` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             name varchar (255) NOT NULL,
             type varchar (155) NOT NULL,
             PRIMARY KEY (id)   
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_committee` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             type varchar (155) NOT NULL,
             active tinyint (4) NOT NULL,
             position int NOT NULL,
@@ -133,17 +180,18 @@ class Database
             PRIMARY KEY (id)      
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_picture` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             gallery_id int NOT NULL,
             name varchar (255) NOT NULL,
             picture varchar (255) NOT NULL,
             statement text NOT NULL,
             email varchar (255) NOT NULL,
             function varchar (255) NOT NULL,
+            position int NOT NULL,
             PRIMARY KEY (id)      
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_candidate_picture` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             gallery_id int NOT NULL,
             committee_id int NOT NULL,
             name varchar (255) NOT NULL,
@@ -151,6 +199,7 @@ class Database
             statement text NOT NULL,
             email varchar (255) NOT NULL,
             function varchar (255) NOT NULL,
+            position int NOT NULL,
             age int NOT NULL,
             job varchar (255) NOT NULL,
             family varchar (255) NOT NULL,
