@@ -2,7 +2,7 @@ export default class Response
 {
 
     private type: "success" | "error";
-    private msg: string | object;
+    private msg: string | Object;
 
     constructor(response: any)
     {

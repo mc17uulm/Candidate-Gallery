@@ -2,6 +2,7 @@
 
 namespace CandidateGallery;
 
+use CandidateGallery\helper\Database;
 use CandidateGallery\helper\Response;
 
 class API
@@ -14,12 +15,18 @@ class API
         try
         {
             $json = json_decode($input, true, 512, JSON_THROW_ON_ERROR);
-            if(!empty($json["type"]) && !empty($json["data"]))
+            if(!empty($json["type"]))
             {
                 switch($json["type"])
                 {
                     case "add_gallery":
                         $response = Gallery::add_gallery($json["data"]);
+                        break;
+                    case "get_gallery":
+                        $response = Gallery::get_gallery($json["data"]);
+                        break;
+                    case "get_galleries":
+                        $response = Database::get_galleries();
                         break;
                     default:
                         $response->setError("Invalid request format");

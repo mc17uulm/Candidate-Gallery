@@ -1,6 +1,7 @@
 import Response from "./Response";
+import { Vars } from "../App";
 
-declare var cg_ajax: any;
+declare var cg_vars : Vars;
 
 export default class APIHandler
 {
@@ -9,7 +10,7 @@ export default class APIHandler
 
     public static init()
     {
-        this.base = cg_ajax.ajax_url;
+        this.base = cg_vars.ajax;
     }
 
     public static async post(res : string, data: any)

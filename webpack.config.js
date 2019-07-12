@@ -28,7 +28,7 @@ module.exports = {
         ]
     },
     output: {
-        filename: "add.js",
+        filename: "CandidateGallery.js",
         path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {

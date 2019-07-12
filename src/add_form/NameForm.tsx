@@ -11,7 +11,9 @@ import Icon from "../form/Icon";
 import Button from "../form/Button";
 import HelpText from "../form/HelpText";
 
-interface NameFormProps {}
+interface NameFormProps {
+	gallery_id?: number
+}
 
 interface NameFormState {
 	gallery: InputObject<string>,
@@ -33,15 +35,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.state = {
 			gallery: {value: "", error: {active: false}},
 			type: "board",
-			images: [
-				new Candidate(
-					1, "http://localhost:8000/wp-content/uploads/2019/07/64928238_2185936344788204_8829693217084538880_o.jpg", "", "", "", ""
-				), new Candidate(
-					2, "http://localhost:8000/wp-content/uploads/2019/07/action-astronomy-constellation-1274260.jpg", "", "", "", ""
-				), new Candidate(
-					3
-				)
-			],
+			images: [],
 			button: "Speichern",
 			help: ""
 		}
@@ -49,6 +43,28 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
 		this.save = this.save.bind(this);
+	}
+
+	async componentWillMount()
+	{
+		if(this.props.gallery_id)
+		{
+			let resp : Response = await APIHandler.post("get_gallery", {id: this.props.gallery_id});
+			
+			if(resp.hasSuccess())
+			{
+				let data = resp.getData();
+				this.setState({
+					gallery: {value: data["name"], error: {active: false, msg: ""}},
+					type: data["type"],
+					images: data["pictures"].map(image => {
+						let c = new Candidate(image.id, image.picture, image.name);
+						c.position = image.position;
+						return c;
+					})
+				});
+			}
+		}
 	}
 
 	handleSubmit(e: FormEvent)

@@ -5,7 +5,7 @@ namespace CandidateGallery;
 use CandidateGallery\helper\Database;
 use CandidateGallery\helper\Response;
 
-class Gallery
+class Gallery implements \JsonSerializable
 {
 
     private $id;
@@ -13,9 +13,9 @@ class Gallery
     private $type;
     private $pictures;
 
-    public function __construct(string $name, string $type = "board", array $pictures = array(), int $id = -1)
+    public function __construct(string $name, string $type = "board", array $pictures = array())
     {
-        $this->id = $id;
+        $this->id = -1;
         $this->name = $name;
         $this->type = $type;
         $this->pictures = $pictures;
@@ -56,22 +56,19 @@ class Gallery
         $this->pictures = $pictures;
     }
 
-    public static function handle_action(string $action, int $id, array $data) : Response
+    public function jsonSerialize()
     {
-        switch($action)
+        return get_object_vars($this);
+    }
+
+    public static function get_gallery(array $data) : Response
+    {
+        if(!empty($data["id"]) && is_int(intval($data["id"])))
         {
-            case "add":
-                return self::add_gallery($data);
-            case "edit":
-                self::edit_gallery($id, $data);
-                break;
-            case "delete":
-                self::remove_gallery($id);
-                break;
-            default:
-                break;
+            return Database::get_gallery(intval($data["id"]));
         }
-        return new Response(false, "Internal Server Error");
+
+        return new Response(false, "Invalid parameters");
     }
 
     public static function add_gallery(array $data) : Response
