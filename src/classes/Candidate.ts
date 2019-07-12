@@ -1,9 +1,25 @@
-import { Error, InputObject } from "../form/Input";
+import { InputObject } from "../form/Input";
+
+interface CandidateObject {
+    id: number;
+    position: number;
+    url: string,
+    name: string,
+    email?: string,
+    func?: string,
+    statement?: string,
+    job?: string,
+    family?: string,
+    age?: number,
+    children?: number,
+    grandchildren?: number
+}
 
 export default class Candidate
 {
 
     id: number;
+    position?: number;
     url: string;
     name: InputObject<string>;
     email: InputObject<string>;
@@ -39,6 +55,24 @@ export default class Candidate
         this.age = {value: age, error: {active: false}};
         this.children = {value: children, error: {active: false}};
         this.grandchildren = {value: grandchildren, error: {active: false}};
+    }
+
+    parse(position : number) : CandidateObject
+    {
+        return {
+            id: this.id,
+            position: position,
+            url: this.url,
+            name: this.name.value,
+            email: this.email.value,
+            func: this.func.value,
+            statement: this.statement.value,
+            job: this.job.value,
+            family: this.family,
+            age: this.age.value,
+            children: this.children.value,
+            grandchildren: this.grandchildren.value
+        }
     }
 
 }

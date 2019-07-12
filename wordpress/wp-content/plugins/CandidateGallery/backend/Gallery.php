@@ -77,6 +77,8 @@ class Gallery
 
     public static function add_gallery(array $data) : Response
     {
+        return new Response(true, $data);
+        die();
         $gallery = new Gallery($data["name"], $data["type"]);
         foreach($data["pictures"] as $picture)
         {

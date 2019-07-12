@@ -5,10 +5,11 @@ import Input from "./Input";
 import Textarea from "./Textarea";
 import Candidate from "../classes/Candidate";
 import Select from "./Select";
+import Icon from "./Icon";
 
 const DragHandle = SortableHandle(() => (
 	<span className="cg_drag_handle">
-		<div className="dashicons dashicons-menu" style={{fontSize: "25px"}}></div>
+		<Icon type="menu" size={25} />
 	</span>
 	)
 );

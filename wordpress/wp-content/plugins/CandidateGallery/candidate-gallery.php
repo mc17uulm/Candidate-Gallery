@@ -26,6 +26,13 @@ use CandidateGallery\API;
 use CandidateGallery\views\AddGallery;
 use CandidateGallery\views\Gallery;
 
+function cg_is_page(string $page)
+{
+    global $current_screen;
+
+    return !empty($current_screen->base) ? strpos($current_screen->base, $page) !== -1 : false;
+}
+
 function cg_initialize()
 {
     Database::initialize();
@@ -43,7 +50,15 @@ function cg_activate()
 
 function cg_load_admin_scripts()
 {
-    wp_enqueue_script('cg_add_render', plugins_url('dist/add.js', __FILE__), array(), false, true);
+    if(cg_is_page('cg_add_gallery'))
+    {
+        wp_enqueue_script('cg_add_render', plugins_url('dist/add.js', __FILE__), array(), false, true);
+        wp_localize_script('cg_add_render', 'cg_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+    else if(cg_is_page('cg_show_galleries'))
+    {
+        wp_enqueue_script('cg_show_render', plugins_url('dist/show.js', __FILE__), array(), false, true);
+    }
 
     wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');
     if (is_admin())
@@ -174,4 +189,5 @@ add_action('admin_enqueue_scripts', 'cg_load_admin_scripts');
 add_shortcode('candidate_gallery', 'cg_shortcode');
 add_action('admin_menu', 'cg_menu');
 
+add_action('wp_ajax_nopriv_cg_ajax', "cg_ajax");
 add_action('wp_ajax_cg_ajax', 'cg_ajax');
