@@ -2,7 +2,6 @@
 
 namespace CandidateGallery;
 
-use CandidateGallery\helper\Committee;
 use CandidateGallery\helper\Database;
 use CandidateGallery\helper\Response;
 
@@ -14,7 +13,7 @@ class Gallery
     private $type;
     private $pictures;
 
-    public function __construct(string $name, int $id = -1, string $type = "board", array $pictures = array())
+    public function __construct(string $name, string $type = "board", array $pictures = array(), int $id = -1)
     {
         $this->id = $id;
         $this->name = $name;
@@ -77,39 +76,17 @@ class Gallery
 
     public static function add_gallery(array $data) : Response
     {
-        return new Response(true, $data);
-        die();
+
         $gallery = new Gallery($data["name"], $data["type"]);
-        foreach($data["pictures"] as $picture)
+        foreach($data["images"] as $image)
         {
-            $committees = array_map(function (array $committee) {
-                return new Committee(
-                    $committee["type"],
-                    $committee["active"],
-                    $committee["position"],
-                    $committee["district"],
-                );
-            }, $picture["committees"]);
-            $gallery->set_picture($data["type"] === "candidates" ? new Candidate(
-                $picture["name"],
-                $picture["picture"],
-                $picture["position"],
-                $picture["email"],
-                $picture["function"],
-                $picture["age"],
-                $picture["job"],
-                $picture["family"],
-                $picture["children"],
-                $picture["grandchildren"],
-                $picture["statement"],
-                $committees
-            ) : new Board(
-                $picture["name"],
-                $picture["picture"],
-                $picture["position"],
-                $picture["email"],
-                $picture["function"],
-                $picture["statement"]
+            $gallery->set_picture(new Board(
+                $image["name"],
+                $image["url"],
+                $image["position"],
+                $image["email"],
+                $image["func"],
+                $image["statement"]
             ));
         }
 

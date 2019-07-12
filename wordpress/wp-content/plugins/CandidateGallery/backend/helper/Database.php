@@ -119,13 +119,13 @@ class Database
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE `{$wpdb->base_prefix}gc_gallery` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             name varchar (255) NOT NULL,
             type varchar (155) NOT NULL,
             PRIMARY KEY (id)   
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_committee` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             type varchar (155) NOT NULL,
             active tinyint (4) NOT NULL,
             position int NOT NULL,
@@ -133,7 +133,7 @@ class Database
             PRIMARY KEY (id)      
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_picture` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             gallery_id int NOT NULL,
             name varchar (255) NOT NULL,
             picture varchar (255) NOT NULL,
@@ -143,7 +143,7 @@ class Database
             PRIMARY KEY (id)      
         ) $charset_collate;";
         $sql .= "CREATE TABLE `{$wpdb->base_prefix}gc_candidate_picture` (
-            id int NOT NULL,
+            id int NOT NULL AUTO_INCREMENT,
             gallery_id int NOT NULL,
             committee_id int NOT NULL,
             name varchar (255) NOT NULL,

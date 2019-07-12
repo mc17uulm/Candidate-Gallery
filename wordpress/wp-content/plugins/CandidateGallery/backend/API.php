@@ -34,8 +34,6 @@ class API
                 $response->setError($e->getMessage());
         }
 
-        usleep(2000000);
-
         $response->send();
 
     }

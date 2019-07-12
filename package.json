@@ -36,6 +36,7 @@
     "@babel/polyfill": "^7.4.4",
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
+    "@wordpress/i18n": "^3.5.0",
     "array-move": "^2.1.0",
     "email-validator": "^2.0.4",
     "react": "^16.8.6",

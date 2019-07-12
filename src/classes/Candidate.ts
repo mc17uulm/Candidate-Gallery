@@ -33,7 +33,7 @@ export default class Candidate
 
     public constructor(
         id: number,
-        url: string,
+        url: string = "",
         name: string = "",
         email: string = "",
         func: string = "",

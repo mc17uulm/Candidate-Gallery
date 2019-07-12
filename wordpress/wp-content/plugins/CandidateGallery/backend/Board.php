@@ -26,7 +26,7 @@ class Board extends Picture
 
     public function get_encrypted_email() : string
     {
-        return Encryption::hash($this->email);
+        return $this->email === "" ? $this->email : Encryption::hash($this->email);
     }
 
     public function get_function(): string

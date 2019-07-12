@@ -1,4 +1,4 @@
-import React, {Component, FormEvent, ReactNode} from "react";
+import React, {Component, FormEvent, ReactNode, MouseEvent} from "react";
 import validator from "email-validator";
 import FormGroup from "../form/FormGroup";
 import Input, { InputObject } from "../form/Input";
@@ -8,6 +8,8 @@ import Candidate from "../classes/Candidate";
 import APIHandler from "../classes/APIHandler";
 import Response from "../classes/Response";
 import Icon from "../form/Icon";
+import Button from "../form/Button";
+import HelpText from "../form/HelpText";
 
 interface NameFormProps {}
 
@@ -15,7 +17,8 @@ interface NameFormState {
 	gallery: InputObject<string>,
 	type: string,
 	images: Candidate[],
-	button: ReactNode
+	button: ReactNode,
+	help: ReactNode
 }
 
 export default class NameForm extends Component<NameFormProps, NameFormState>
@@ -35,9 +38,12 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 					1, "http://localhost:8000/wp-content/uploads/2019/07/64928238_2185936344788204_8829693217084538880_o.jpg", "", "", "", ""
 				), new Candidate(
 					2, "http://localhost:8000/wp-content/uploads/2019/07/action-astronomy-constellation-1274260.jpg", "", "", "", ""
+				), new Candidate(
+					3
 				)
 			],
-			button: "Speichern"
+			button: "Speichern",
+			help: ""
 		}
 
 		this.update = this.update.bind(this);
@@ -66,7 +72,11 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 	{
 		let images = this.state.images.map((image: Candidate, i: number) => {
 			if(i === index) {
-				image[id] = {value: value, error: {active: false, msg: ""}};
+				if(id === "url") {
+					image.url = value;
+				} else {
+					image[id] = {value: value, error: {active: false, msg: ""}};
+				}
 			}
 			return image;
 		});
@@ -75,7 +85,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		});
 	}
 
-	async save() {
+	async save(e: MouseEvent) {
 
 		await this.setState({button: (<span><Icon type="image-rotate" spin /> Speichern...</span>)})
 
@@ -107,9 +117,9 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 		let response : Response = await APIHandler.post("add_gallery", data);
 
-		await this.setState({button: "Speichern"})
+		let help : ReactNode = response.hasSuccess() ? "Galerie erfolgreich gespeichert" : "Fehler beim Speichern";
 
-		console.log(response);
+		await this.setState({button: "Speichern", help: help});
 	}
 
 	render()
@@ -122,12 +132,16 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				</FormGroup>
 				<FormGroup>
 					<label className="cg_label">Type:</label>
-					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "candidates", value: "Kandidat*innen"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
+					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
 				</FormGroup>
 				<FormGroup>
 					<ImageForm type={this.state.type} id="images" images={this.state.images} update={this.update} updateImage={this.updateImage} />
 				</FormGroup>
-				<button className="cg_button" onClick={this.save}>{this.state.button}</button>
+				<div className="cg_button_group">
+					<Button color="green" callback={this.save} >{this.state.button}</Button> 
+					<HelpText>{this.state.help}</HelpText>
+				</div>
+
 			</form>
 		);
 	}
