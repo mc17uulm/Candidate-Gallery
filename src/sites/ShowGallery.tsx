@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import Response from "../classes/Response";
 import APIHandler from "../classes/APIHandler";
-import Gallery, { GalleryProps } from "../Gallery";
+import Gallery, { GalleryProps } from "../gallery/Gallery";
 
 interface ShowGalleryProps {}
 
