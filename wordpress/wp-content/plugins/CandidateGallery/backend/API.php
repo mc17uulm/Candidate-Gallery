@@ -3,6 +3,7 @@
 namespace CandidateGallery;
 
 use CandidateGallery\helper\Database;
+use CandidateGallery\helper\EventHandler;
 use CandidateGallery\helper\Response;
 
 class API
@@ -19,8 +20,8 @@ class API
             {
                 switch($json["type"])
                 {
-                    case "add_gallery":
-                        $response = Gallery::add_gallery($json["data"]);
+                    case "handle_gallery":
+                        $response = EventHandler::handle($json["data"]);
                         break;
                     case "get_gallery":
                         $response = Gallery::get_gallery($json["data"]);

@@ -51,6 +51,7 @@ function cg_load_admin_scripts()
         {
             wp_enqueue_script('cg_backend_render', plugins_url('dist/CandidateGallery.js', __FILE__), array('wp-i18n'), false, true);
             wp_localize_script('cg_backend_render', 'cg_vars', array(
+                'base' => plugin_dir_url(__FILE__),
                 'site' => $_GET["page"],
                 'ajax' => admin_url('admin-ajax.php')
             ));

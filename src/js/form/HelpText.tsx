@@ -1,11 +1,16 @@
 import React, {Component, ReactNode} from "react";
 
 interface HelpTextProps {
-	children?: ReactNode[] | ReactNode
+	children?: ReactNode[] | ReactNode,
+	color?: "green" | "red"
 }
 
 export default class HelpText extends Component<HelpTextProps>
 {
+
+	static defaultProps = {
+		color: "green"
+	}
 
 	constructor(props: HelpTextProps)
 	{
@@ -15,7 +20,7 @@ export default class HelpText extends Component<HelpTextProps>
 	render()
 	{
 		return (
-			<div className="cg_help_text">
+			<div className={"cg_help_text" + (this.props.color === "green" ? " cg_green" : "cg_red")}>
 				{this.props.children}
 			</div>
 		);

@@ -1,8 +1,13 @@
 .idea/
 test.php
-wordpress/
 .vscode/
 node_modules/
+wordpress/*
+!wordpress/wp-content/
+wordpress/wp-content/*
+!wordpress/wp-content/plugins/
+wordpress/wp-content/plugins/*
 !wordpress/wp-content/plugins/CandidateGallery/
-wordpress/wp-content/plugins/CandidateGallery/dist/
-wordpress/wp-content/plugins/CandidateGallery/vendor/
+wordpress/wp-content/plugins/CandidateGallery/*
+!wordpress/wp-content/plugins/CandidateGallery/backend/
+!wordpress/wp-content/plugins/CandidateGallery/lib/

@@ -23,7 +23,7 @@ export default class ImageButton extends Component<ImageButtonProps>
 		if(typeof wp !== 'undefined' && wp.media && wp.media.editor)
 		{
 			wp.media.editor.send.attachment = (props: any, attachment: any) => {
-				this.props.add(new Candidate(attachment.id, attachment.url));
+				this.props.add(new Candidate(attachment.url));
 			};
 		}
 

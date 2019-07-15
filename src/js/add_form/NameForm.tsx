@@ -10,9 +10,11 @@ import Response from "../classes/Response";
 import Icon from "../form/Icon";
 import Button from "../form/Button";
 import HelpText from "../form/HelpText";
+import EventHandler, { Container } from "../classes/EventHandler";
 
 interface NameFormProps {
-	gallery_id?: number
+	gallery_id?: number,
+	type: "add" | "edit"
 }
 
 interface NameFormState {
@@ -20,8 +22,13 @@ interface NameFormState {
 	type: string,
 	images: Candidate[],
 	button: ReactNode,
-	help: ReactNode
+	help: {
+		text: string,
+		color?: "green" | "red" 
+	}
 }
+
+let previous : Container;
 
 export default class NameForm extends Component<NameFormProps, NameFormState>
 {
@@ -37,7 +44,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			type: "board",
 			images: [],
 			button: "Speichern",
-			help: ""
+			help: {text: ""}
 		}
 
 		this.update = this.update.bind(this);
@@ -54,15 +61,23 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			if(resp.hasSuccess())
 			{
 				let data = resp.getData();
+				let images : Candidate[] = data["pictures"].map(image => {
+					let c = new Candidate(image.picture, image.id, image.name);
+					c.set_position(image.position);
+					c.reset();
+					return c;
+				});
 				this.setState({
 					gallery: {value: data["name"], error: {active: false, msg: ""}},
 					type: data["type"],
-					images: data["pictures"].map(image => {
-						let c = new Candidate(image.id, image.picture, image.name);
-						c.position = image.position;
-						return c;
-					})
+					images: images
 				});
+				previous = {
+					id: this.props.gallery_id,
+					name: data["name"],
+					type: data["type"],
+					images: images.map((img: Candidate) => img.reduce())
+				};
 			}
 		}
 	}
@@ -89,9 +104,10 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		let images = this.state.images.map((image: Candidate, i: number) => {
 			if(i === index) {
 				if(id === "url") {
-					image.url = value;
+					image.set_url(value);
 				} else {
 					image[id] = {value: value, error: {active: false, msg: ""}};
+					image.update_key();
 				}
 			}
 			return image;
@@ -110,8 +126,8 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		if(this.state.gallery.value === "") { correct = false; this.setState({gallery: {value: "", error: {active: true, msg: "Bitte gib der Gallery einen Namen!"}}})};
 
 		let images = this.state.images.map((image: Candidate) => {
-			if(image.name.value === "") {correct = false; image.name = {value: "", error: {active: true, msg: "Bitte gib den Namen der Person an!"}}};
-			if(image.email.value !== "" && !validator.validate(image.email.value)) {correct = false; image.email = {value: image.email.value, error: {active: true, msg: "Bitte gib die gültige E-Mail-Adresse der Person an!"}}};
+			if(image.get_name().value === "") {correct = false; image.set_name({value: "", error: {active: true, msg: "Bitte gib den Namen der Person an!"}})};
+			if(image.get_email().value !== "" && !validator.validate(image.get_email().value)) {correct = false; image.set_email({value: image.get_email().value, error: {active: true, msg: "Bitte gib die gültige E-Mail-Adresse der Person an!"}})};
 
 			return image;
 		});
@@ -123,19 +139,35 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			return;
 		}
 
-		let data : object = {
+		let events = EventHandler.create_event_loop(previous, {
 			name: this.state.gallery.value,
 			type: this.state.type,
-			images: this.state.images.map((image: Candidate, index: number) => {
-				return image.parse(index);
-			})
-		};
+			images: this.state.images.map((img: Candidate) => img.reduce())
+		});
 
-		let response : Response = await APIHandler.post("add_gallery", data);
+		console.log(events.length);
 
-		let help : ReactNode = response.hasSuccess() ? "Galerie erfolgreich gespeichert" : "Fehler beim Speichern";
+		if(events.length === 0) {
+			await this.setState({button: "Speichern"});
+			return;
+		}
 
-		await this.setState({button: "Speichern", help: help});
+		let response : Response = await APIHandler.post("handle_gallery", events);
+
+		if(response.hasSuccess())
+		{
+			previous = {
+				id: this.props.gallery_id,
+				name: this.state.gallery.value,
+				type: this.state.type,
+				images: this.state.images.map((img: Candidate) => img.reduce())
+			};
+			let i : Candidate[] = this.state.images.map((img: Candidate) => {img.reset(); return img;});
+			await this.setState({images: i, button: "Speichern", help: {text: "Galerie erfolgreich gespeichert", color: "green"}});
+		} else {
+			await this.setState({button: "Speichern", help: {text: "Fehler beim Speichern", color: "red"}});
+		}
+
 	}
 
 	render()
@@ -155,7 +187,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				</FormGroup>
 				<div className="cg_button_group">
 					<Button color="green" callback={this.save} >{this.state.button}</Button> 
-					<HelpText>{this.state.help}</HelpText>
+					<HelpText color={this.state.help.color}>{this.state.help.text}</HelpText>
 				</div>
 
 			</form>
