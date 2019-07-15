@@ -1,5 +1,6 @@
 import React, {Component, FormEvent, ReactNode, MouseEvent} from "react";
 import validator from "email-validator";
+import FontAwesome from "react-fontawesome";
 import FormGroup from "../form/FormGroup";
 import Input, { InputObject } from "../form/Input";
 import ImageForm from "../form/ImageForm";
@@ -43,7 +44,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			gallery: {value: "", error: {active: false}},
 			type: "board",
 			images: [],
-			button: "Speichern",
+			button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
 			help: {text: ""}
 		}
 
@@ -62,7 +63,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			{
 				let data = resp.getData();
 				let images : Candidate[] = data["pictures"].map(image => {
-					let c = new Candidate(image.picture, image.id, image.name);
+					let c = new Candidate(image.picture, image.id, image.name, image.email, image.function, image.statement);
 					c.set_position(image.position);
 					c.reset();
 					return c;
@@ -119,7 +120,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 	async save(e: MouseEvent) {
 
-		await this.setState({button: (<span><Icon type="image-rotate" spin /> Speichern...</span>)})
+		await this.setState({button: (<React.Fragment><FontAwesome spin name="cog" /> Speichern ...</React.Fragment>)})
 
 		let correct : boolean = true;
 
@@ -145,8 +146,6 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			images: this.state.images.map((img: Candidate) => img.reduce())
 		});
 
-		console.log(events.length);
-
 		if(events.length === 0) {
 			await this.setState({button: "Speichern"});
 			return;
@@ -163,9 +162,9 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				images: this.state.images.map((img: Candidate) => img.reduce())
 			};
 			let i : Candidate[] = this.state.images.map((img: Candidate) => {img.reset(); return img;});
-			await this.setState({images: i, button: "Speichern", help: {text: "Galerie erfolgreich gespeichert", color: "green"}});
+			await this.setState({images: i, button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: {text: "Galerie erfolgreich gespeichert", color: "green"}});
 		} else {
-			await this.setState({button: "Speichern", help: {text: "Fehler beim Speichern", color: "red"}});
+			await this.setState({button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: {text: "Fehler beim Speichern", color: "red"}});
 		}
 
 	}

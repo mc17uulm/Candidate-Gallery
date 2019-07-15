@@ -120,7 +120,20 @@ class EventHandler
             if(!self::check_array(array('name', 'url', 'statement', 'email', 'func', 'position'), $data)) {
                 throw new EventException("Invalid data package 4");
             }
-            if(self::$gallery_id !== -1)
+
+            if(!empty($data["gallery_id"]) && self::$gallery_id === -1)
+            {
+                $id = Database::add_picture(
+                    $data["gallery_id"],
+                    $data["name"],
+                    $data["url"],
+                    $data["statement"],
+                    $data["email"],
+                    $data["func"],
+                    intval($data["position"])
+                );
+                return array("event" => $event->get_hash(), "id" => $id, "name" => $data["name"]);
+            } else if (empty($data["gallery_id"]) && self::$gallery_id !== -1)
             {
                 $id = Database::add_picture(
                     self::$gallery_id,

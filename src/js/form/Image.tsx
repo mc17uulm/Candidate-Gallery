@@ -1,5 +1,6 @@
 import React, {Component, MouseEvent} from "react";
 import {SortableElement, SortableHandle} from "react-sortable-hoc";
+import FontAwesome from "react-fontawesome";
 import FormGroup from "./FormGroup";
 import Input from "./Input";
 import Textarea from "./Textarea";
@@ -97,7 +98,7 @@ class Image extends Component<ImageProps>
 							<Select id="family" small options={[{key: "ledig", value: "Ledig"}, {key: "verheiratet", value: "verheiratet"}, {key: "geschieden", value: "geschieden"}, {key: "verwitwet", value: "verwitwet"}]} update={this.props.update} />
 						</div>
 					) : ""}
-					<button className="cg_button cg_button_red" onClick={this.delete}>Löschen</button>
+					<button className="cg_button cg_button_red" onClick={this.delete}><FontAwesome name="trash" /> Löschen</button>
 					<DragHandle />
 				</FormGroup>
 			</div>

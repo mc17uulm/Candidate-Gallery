@@ -17,7 +17,7 @@ class Database
             $gallery = new Gallery($res[0]->name, $res[0]->type);
             $gallery->set_id($id);
             $gallery->set_pictures(self::get_pictures($id));
-            return new Response(true, $gallery->jsonSerialize());
+            return new Response(true, $gallery->parse());
         }
         return new Response(false, "Database Error");
     }

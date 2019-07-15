@@ -5,7 +5,7 @@ namespace CandidateGallery;
 use CandidateGallery\helper\Database;
 use CandidateGallery\helper\Response;
 
-class Gallery implements \JsonSerializable
+class Gallery
 {
 
     private $id;
@@ -56,9 +56,16 @@ class Gallery implements \JsonSerializable
         $this->pictures = $pictures;
     }
 
-    public function jsonSerialize()
+    public function parse() : array
     {
-        return get_object_vars($this);
+        return array(
+            "id" => $this->id,
+            "name" => $this->name,
+            "type" => $this->type,
+            "pictures" => array_map(function(Person $img) {
+                return $img->parse();
+            }, $this->pictures)
+        );
     }
 
     public static function handle(array $data) : Response

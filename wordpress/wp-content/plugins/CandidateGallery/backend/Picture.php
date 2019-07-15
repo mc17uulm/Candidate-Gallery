@@ -2,7 +2,7 @@
 
 namespace CandidateGallery;
 
-class Picture implements \JsonSerializable
+class Picture implements Person
 {
 
     private $id;
@@ -43,9 +43,14 @@ class Picture implements \JsonSerializable
         return $this->position;
     }
 
-    public function jsonSerialize()
+    public function parse() : array
     {
-        return get_object_vars($this);
+        return array(
+            "id" => $this->id,
+            "name" => $this->name,
+            "picture" => $this->picture,
+            "position" => $this->position
+        );
     }
 
 }

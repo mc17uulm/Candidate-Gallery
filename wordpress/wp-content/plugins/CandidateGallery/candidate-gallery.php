@@ -43,6 +43,11 @@ function cg_activate()
 function cg_load_admin_scripts()
 {
 
+    if(!wp_style_is('fontawesome', 'enqueued')) {
+        wp_register_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0');
+        wp_enqueue_style('fontawesome');
+    }
+
     if(in_array($_GET["page"], array('cg_add_gallery', 'cg_edit_gallery', 'candidate-gallery')))
     {
         wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');

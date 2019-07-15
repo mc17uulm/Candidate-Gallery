@@ -1,4 +1,5 @@
 import React, {Component, MouseEvent} from "react";
+import FontAwesome from "react-fontawesome";
 import ImageButton from "./ImageButton";
 import ImageGallery from "./ImageGallery";
 import arrayMove from "array-move";
@@ -58,8 +59,8 @@ export default class ImageForm extends Component<ImageFormProps>
 		return (
 			<div>
 				<ButtonGroup>
-					<ImageButton add={this.addImage} />
-					<Button callback={this.addData}>Add Data</Button>
+					<ImageButton size={this.props.images.length} add={this.addImage} />
+					<Button callback={this.addData}><FontAwesome name="plus" /> Add Data</Button>
 				</ButtonGroup>
 				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage} addImage={this.addImage}/>
 			</div>

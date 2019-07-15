@@ -8,6 +8,7 @@ export interface CandidateObject {
     position: number;
     url: string,
     name: string,
+    gallery_id?: number,
     email?: string,
     func?: string,
     statement?: string,
@@ -27,6 +28,7 @@ export default class Candidate
     private position?: number;
     private url: string;
     private name: InputObject<string>;
+    private gallery_id: number;
     private email: InputObject<string>;
     private func: InputObject<string>;
     private statement: InputObject<string>;
@@ -54,6 +56,7 @@ export default class Candidate
         this.id = id;
         this.url = url;
         this.name = {value: name, error: {active: false}};
+        this.gallery_id = -1;
         this.email =  {value: email, error: {active: false}};
         this.func =  {value: func, error: {active: false}};
         this.statement =  {value: statement, error: {active: false}};
@@ -73,6 +76,8 @@ export default class Candidate
     public set_url(url : string) { this.update_key(); this.url = url}
     public get_name() : InputObject<string> { return this.name; }
     public set_name(name : InputObject<string>) { this.update_key(); this.name = name}
+    public get_gallery_id() : number { return this.gallery_id; }
+    public set_gallery_id(gallery_id: number) { this.gallery_id = gallery_id; }
     public get_email() : InputObject<string> { return this.email; }
     public set_email(email : InputObject<string>) { this.update_key(); this.email = email}
     public get_func() : InputObject<string> { return this.func; }
@@ -107,6 +112,7 @@ export default class Candidate
             position: this.position,
             url: this.url,
             name: this.name.value,
+            gallery_id: this.gallery_id,
             email: this.email.value,
             func: this.func.value,
             statement: this.statement.value,
