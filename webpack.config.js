@@ -24,6 +24,26 @@ module.exports = {
                         loader: "ts-loader"
                     }
                 ]
+            }, {
+                test: /\.less$/,
+                exclude: [
+                    /node_modules/,
+                    /dist/,
+                    /vendor/
+                ],
+                use: [
+                    {
+                        loader: "style-loader",
+                    }, {
+                        loader: "typings-for-css-modules-loader",
+                        options: {
+                            modules: true,
+                            namesExport: true
+                        }
+                    },{
+                        loader: "less-loader"
+                    }
+                ]
             }
         ]
     },
@@ -32,6 +52,6 @@ module.exports = {
         path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"]
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
     }
 };

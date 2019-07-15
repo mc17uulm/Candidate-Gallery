@@ -1,7 +1,8 @@
 import React, {Component} from "react";
+import shortid from "shortid";
 import Response from "../classes/Response";
 import APIHandler from "../classes/APIHandler";
-import Gallery, { GalleryProps } from "../Gallery";
+import Gallery, { GalleryProps } from "../gallery/Gallery";
 
 interface ShowGalleryProps {}
 
@@ -47,7 +48,7 @@ export default class ShowGallery extends Component<ShowGalleryProps, ShowGallery
 			<div className="cg_box">
 				<h1 className="cg_title">Your Galleries</h1>
 				{this.state.galleries.map((el: GalleryProps) => (
-					<Gallery {...el} />
+					<Gallery key={shortid.generate()} {...el} />
 				))}
 			</div>
 		);

@@ -22,7 +22,7 @@ class Database
         return new Response(false, "Database Error");
     }
 
-    public function get_galleries() : Response
+    public static function get_galleries() : Response
     {
         global $wpdb;
         $res = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "gc_gallery");
@@ -38,22 +38,63 @@ class Database
         return new Response(false, "");
     }
 
-    public static function add_gallery(Gallery $gallery) : Response
+    public static function add_gallery(string $name, string $type) : int
     {
         global $wpdb;
-        $wpdb->insert($wpdb->prefix . "gc_gallery", array('name' => $gallery->get_name(), 'type' => $gallery->get_type()));
-        $gallery->set_id($wpdb->insert_id);
-        self::add_pictures($gallery);
-        return new Response(true, $gallery->get_id());
+        $wpdb->insert($wpdb->prefix . "gc_gallery", array('name' => $name, 'type' => $type));
+        return $wpdb->insert_id;
     }
 
-    public static function edit_gallery(Gallery $gallery) : Response
+    public static function edit_gallery(int $id, string $name, string $type) : bool
     {
         global $wpdb;
 
-        $wpdb->update($wpdb->prefix . "gc_gallery", array('name' => $gallery->get_name(), 'type' => $gallery->get_type()), array("id" => $gallery->get_id()));
-        self::edit_pictures($gallery);
-        return new Response(true, "");
+        return $wpdb->update($wpdb->prefix . "gc_gallery", array('name' => $name, 'type' => $type), array("id" => $id)) != 0;
+    }
+
+    public static function delete_gallery(int $id) : void
+    {
+        global $wpdb;
+
+        $wpdb->delete($wpdb->prefix . "gc_picture", array('gallery_id' => $id));
+        $wpdb->delete($wpdb->prefix . "gc_gallery", array('id' => $id));
+    }
+
+    public static function add_picture(int $gallery_id, string $name, string $picture, string $statement, string $email, string $function, int $position) : int
+    {
+        global $wpdb;
+        $wpdb->insert($wpdb->prefix . "gc_picture", array(
+            'gallery_id' => $gallery_id,
+            'name' => $name,
+            'picture' => $picture,
+            'statement' => $statement,
+            'email' => $email,
+            'function' => $function,
+            'position' => $position
+        ));
+
+        return $wpdb->insert_id;
+    }
+
+    public static function edit_picture(int $id, string $name, string $picture, string $statement, string $email, string $function, int $position) : bool
+    {
+        global $wpdb;
+
+        return $wpdb->update($wpdb->prefix . 'gc_picture', array(
+            'name' => $name,
+            'picture' => $picture,
+            'statement' => $statement,
+            'email' => $email,
+            'function' => $function,
+            'position' => $position
+        ), array('id' => $id));
+    }
+
+    public static function delete_picture(int $id) : void
+    {
+        global $wpdb;
+
+        $wpdb->delete($wpdb->prefix . "gc_picture", array('id' => $id));
     }
 
     public static function get_pictures(int $gallery_id) : array

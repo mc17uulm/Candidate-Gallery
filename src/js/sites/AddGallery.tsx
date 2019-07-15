@@ -16,7 +16,7 @@ export default class AddGallery extends Component<AddGalleryProps>
 		return (
 			<div className="cg_box">
                 <h1 className="cg_title">Add new Gallery</h1>
-                <NameForm />
+                <NameForm type="add" />
             </div>
 		);
 	}

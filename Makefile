@@ -1,8 +1,12 @@
 SHELL := /usr/bin/env bash
 
-run: ; docker-compose up -d
+run: ; 
+	docker-compose up -d
+	npm start
 
-start: ; docker-compose up -d
+start: ; 
+	docker-compose up -d
+	npm start
 
 stop: ; docker-compose down
 

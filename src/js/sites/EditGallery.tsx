@@ -19,7 +19,7 @@ export default class EditGallery extends Component<EditGalleryProps>
 		return (
 			<div className="cg_box">
                 <h1 className="cg_title">Edit Gallery</h1>
-				<NameForm gallery_id={this.props.id} />
+				<NameForm type="edit" gallery_id={this.props.id} />
             </div>
 		);
 	}

@@ -58,7 +58,7 @@ class Image extends Component<ImageProps>
 	{
 		e.preventDefault();
 
-		this.props.onDelete(this.props.image.id);
+		this.props.onDelete(this.props.image.get_id());
 	}
 
 	addImage(e: MouseEvent)
@@ -66,7 +66,6 @@ class Image extends Component<ImageProps>
 		if(typeof wp !== "undefined" && wp.media && wp.media.editor)
 		{
 			wp.media.editor.send.attachment = (props: any, attachment: any) => {
-				console.log(attachment.url);
 				this.props.update("url", attachment.url);
 			};
 		}
@@ -79,22 +78,22 @@ class Image extends Component<ImageProps>
 	{
 		return (
 			<div className="cg_image_container">
-				{this.props.image.url ? (
-					<img className="cg_image" src={this.props.image.url}/>
+				{this.props.image.get_url() ? (
+					<img className="cg_image" src={this.props.image.get_url()}/>
 				) : (<div className="cg_image">
 						<Button callback={this.addImage}>Add Image</Button>
 					</div>)	}
 				<FormGroup>
-					<Input id="name" type="text" small placeholder="Name..." value={this.props.image.name} update={this.props.update} />
-					<Input id="email" type="email" small placeholder="E-Mail-Adresse..." value={this.props.image.email} update={this.props.update} />
-					<Input id="func" type="text" small placeholder="Amt/Funktion..." value={this.props.image.func} update={this.props.update} />
-					<Textarea id="statement" small placeholder="Statement" value={this.props.image.statement} update={this.props.update} />
+					<Input id="name" type="text" small placeholder="Name..." value={this.props.image.get_name()} update={this.props.update} />
+					<Input id="email" type="email" small placeholder="E-Mail-Adresse..." value={this.props.image.get_email()} update={this.props.update} />
+					<Input id="func" type="text" small placeholder="Amt/Funktion..." value={this.props.image.get_func()} update={this.props.update} />
+					<Textarea id="statement" small placeholder="Statement" value={this.props.image.get_statement()} update={this.props.update} />
 					{this.props.type === "candidates" ? (
 						<div>
-							<Input id="job" type="text" small placeholder="Beruf..." value={this.props.image.job} update={this.props.update} />
-							<Input id="age" type="number" small placeholder="Alter..." value={this.props.image.age} update={this.props.update} />
-							<Input id="children" type="number" small placeholder="Kinder..." value={this.props.image.children} update={this.props.update} />
-							<Input id="grandchildren" type="number" small placeholder="Enkelkinder..." value={this.props.image.grandchildren} update={this.props.update} />
+							<Input id="job" type="text" small placeholder="Beruf..." value={this.props.image.get_job()} update={this.props.update} />
+							<Input id="age" type="number" small placeholder="Alter..." value={this.props.image.get_age()} update={this.props.update} />
+							<Input id="children" type="number" small placeholder="Kinder..." value={this.props.image.get_children()} update={this.props.update} />
+							<Input id="grandchildren" type="number" small placeholder="Enkelkinder..." value={this.props.image.get_grandchildren()} update={this.props.update} />
 							<Select id="family" small options={[{key: "ledig", value: "Ledig"}, {key: "verheiratet", value: "verheiratet"}, {key: "geschieden", value: "geschieden"}, {key: "verwitwet", value: "verwitwet"}]} update={this.props.update} />
 						</div>
 					) : ""}

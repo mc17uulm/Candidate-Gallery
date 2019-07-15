@@ -6,6 +6,7 @@ import ParamHandler from "./classes/ParamHandler";
 import ShowGallery from "./sites/ShowGallery";
 
 export interface Vars {
+    base: string,
     site: string,
     ajax: string
 };
@@ -27,7 +28,6 @@ export default class App extends Component<AppProps>
 
     render()
     {
-        console.log(cg_vars);
         switch(cg_vars.site)
         {
             case 'cg_add_gallery':

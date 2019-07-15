@@ -35,14 +35,17 @@ export default class ImageForm extends Component<ImageFormProps>
 
 	deleteImage(id: number)
 	{
-		let images = this.props.images.filter(el => el.id !== id);
+		let images = this.props.images.filter(el => el.get_id() !== id);
 		this.props.update(this.props.id, images);
 	}
 
 	onSortEnd({oldIndex, newIndex})
 	{
 		let images = arrayMove(this.props.images, oldIndex, newIndex);
-		this.props.update(this.props.id, images);
+		this.props.update(this.props.id, images.map((img: Candidate, index: number) => {
+			img.set_position(index);
+			return img;
+		}));
 	}
 
 	addData(e: MouseEvent)
