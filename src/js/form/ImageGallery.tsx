@@ -6,7 +6,7 @@ import Candidate from "../classes/Candidate";
 interface ImageGalleryProps {
 	images: Candidate[],
 	type: string,
-	onDelete: (id: number) => void,
+	onDelete: (key: string) => void,
 	update: (id: string, value: any, index: number) => void,
 	addImage: (image: Candidate) => void
 }

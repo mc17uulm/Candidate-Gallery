@@ -34,9 +34,9 @@ export default class ImageForm extends Component<ImageFormProps>
 		this.props.update(this.props.id, images);
 	}
 
-	deleteImage(id: number)
+	deleteImage(key: string)
 	{
-		let images = this.props.images.filter(el => el.get_id() !== id);
+		let images = this.props.images.filter(el => el.get_key() !== key);
 		this.props.update(this.props.id, images);
 	}
 

@@ -22,7 +22,7 @@ interface ImageProps {
 	index: number,
 	type: string,
 	image: Candidate,
-	onDelete: (id: number) => void,
+	onDelete: (key: string) => void,
 	update: (id: string, value: any) => void,
 	addImage: (image: Candidate) => void
 }
@@ -59,7 +59,7 @@ class Image extends Component<ImageProps>
 	{
 		e.preventDefault();
 
-		this.props.onDelete(this.props.image.get_id());
+		this.props.onDelete(this.props.image.get_key());
 	}
 
 	addImage(e: MouseEvent)

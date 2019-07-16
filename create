@@ -27,7 +27,7 @@ const  exec = () => {
 
     if(args.length > 0) {
         let path = args[0];
-        path = `./src/${path}`;
+        path = `./src/js/${path}`;
         let arr = path.split("/");
         let name = arr[arr.length-1].split(".")[0];
         build(path + ".tsx", createContext(name));
