@@ -38,6 +38,7 @@ function cg_remove()
 function cg_activate()
 {
     wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
+
 }
 
 function cg_load_admin_scripts()
@@ -54,7 +55,7 @@ function cg_load_admin_scripts()
 
         if (is_admin())
         {
-            wp_enqueue_script('cg_backend_render', plugins_url('dist/CandidateGallery.js', __FILE__), array('wp-i18n'), false, true);
+            wp_enqueue_script('cg_backend_render', plugins_url('dist/cg_backend.js', __FILE__), array('wp-i18n'), false, true);
             wp_localize_script('cg_backend_render', 'cg_vars', array(
                 'base' => plugin_dir_url(__FILE__),
                 'site' => $_GET["page"],
@@ -86,6 +87,11 @@ function cg_menu()
 function cg_ajax()
 {
     API::handle();
+}
+
+function cg_ajax_frontend()
+{
+    API::handle(true);
 }
 
 function cg_build_candidate(array $candidate, string $committee) : string
@@ -179,6 +185,26 @@ function cg_shortcode($atts)
     App::handle_shortcode($atts);
 }
 
+function cg_load_gutenberg_block()
+{
+    if(!function_exists('register_block_type'))
+    {
+        return;
+    }
+
+    wp_enqueue_script(
+        'cg_gutenberg_plugin',
+        plugins_url('dist/cg_frontend.js', __FILE__),
+        array('wp-blocks', 'wp-i18n', 'wp-element'),
+        filemtime(plugin_dir_path(__FILE__) . 'dist/cg_frontend.js')
+    );
+    wp_localize_script('cg_gutenberg_plugin', 'cg_vars', array(
+        'base' => plugin_dir_url(__FILE__),
+        'ajax' => admin_url('admin-ajax.php')
+    ));
+
+}
+
 register_activation_hook(__FILE__, 'cg_initialize');
 register_deactivation_hook(__FILE__, 'cg_remove');
 
@@ -188,7 +214,8 @@ add_action('admin_enqueue_scripts', 'cg_load_admin_scripts');
 add_shortcode('candidate_gallery', 'cg_shortcode');
 add_action('admin_menu', 'cg_menu');
 
-add_action('wp_ajax_nopriv_cg_ajax', "cg_ajax");
+add_action('wp_ajax_nopriv_cg_ajax', "cg_ajax_frontend");
 add_action('wp_ajax_cg_ajax', 'cg_ajax');
 
 add_action('plugins_loaded', 'cg_load_plugin_textdomain');
+add_action('init', 'cg_load_gutenberg_block');

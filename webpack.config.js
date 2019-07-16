@@ -1,6 +1,12 @@
 const {resolve} = require('path');
 
-module.exports = {
+let config = {
+    module: {}
+};
+
+let backend = Object.assign({}, config, {
+    name: "backend",
+    entry: "./src/js/backend/",
     module: {
         rules: [
             {
@@ -48,10 +54,51 @@ module.exports = {
         ]
     },
     output: {
-        filename: "CandidateGallery.js",
+        filename: "cg_backend.js",
         path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
     }
-};
+});
+
+let frontend = Object.assign({}, config, {
+    name: "frontend",
+    entry: "./src/js/frontend",
+    module: {
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: [
+                    /node_modules/,
+                    /dist/,
+                    /vendor/
+                ],
+                use: {
+                    loader: "babel-loader"
+                }
+            }, {
+                test: /\.(ts|tsx)$/,
+                exclude: [
+                    /node_modules/
+                ],
+                use: [
+                    {
+                        loader: "ts-loader"
+                    }
+                ]
+            }
+        ]
+    },
+    output: {
+        filename: "cg_frontend.js",
+        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
+    },
+    resolve: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"]
+    }
+});
+
+module.exports = [
+    backend, frontend
+];
