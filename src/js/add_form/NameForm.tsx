@@ -8,7 +8,6 @@ import Select from "../form/Select";
 import Candidate from "../classes/Candidate";
 import APIHandler from "../classes/APIHandler";
 import Response from "../classes/Response";
-import Icon from "../form/Icon";
 import Button from "../form/Button";
 import HelpText from "../form/HelpText";
 import EventHandler, { Container } from "../classes/EventHandler";
@@ -26,10 +25,9 @@ interface NameFormState {
 	help: {
 		text: string,
 		color?: "green" | "red" 
-	}
+	},
+	previous?: Container
 }
-
-let previous : Container;
 
 export default class NameForm extends Component<NameFormProps, NameFormState>
 {
@@ -51,13 +49,20 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
 		this.save = this.save.bind(this);
+		this.get_data = this.get_data.bind(this);
 	}
 
 	async componentWillMount()
 	{
-		if(this.props.gallery_id)
+		await this.get_data();
+	}
+
+	async get_data(gallery_id : number = -1) {
+
+		if(this.props.gallery_id || gallery_id !== -1)
 		{
-			let resp : Response = await APIHandler.post("get_gallery", {id: this.props.gallery_id});
+			let id = this.props.gallery_id || gallery_id;
+			let resp : Response = await APIHandler.post("get_gallery", {id: id});
 			
 			if(resp.hasSuccess())
 			{
@@ -68,17 +73,22 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 					c.reset();
 					return c;
 				});
-				this.setState({
+
+				// Sort images for right position
+				images.sort((a: Candidate, b: Candidate) => {
+					return a.get_position() - b.get_position();
+				});
+				await this.setState({
 					gallery: {value: data["name"], error: {active: false, msg: ""}},
 					type: data["type"],
-					images: images
+					images: images,
+					previous: {
+						id: id,
+						name: data["name"],
+						type: data["type"],
+						images: images.map((img: Candidate) => img.reduce())
+					}
 				});
-				previous = {
-					id: this.props.gallery_id,
-					name: data["name"],
-					type: data["type"],
-					images: images.map((img: Candidate) => img.reduce())
-				};
 			}
 		}
 	}
@@ -140,7 +150,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			return;
 		}
 
-		let events = EventHandler.create_event_loop(previous, {
+		let events = EventHandler.create_event_loop(this.state.previous, {
 			name: this.state.gallery.value,
 			type: this.state.type,
 			images: this.state.images.map((img: Candidate) => img.reduce())
@@ -151,21 +161,36 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			return;
 		}
 
+		let gallery_hash = "";
+		if(events[0].category === "gallery" && events[0].type === "add")
+		{
+			gallery_hash = events[0].hash;
+		}
+
+		console.log("Events", events);
+
 		let response : Response = await APIHandler.post("handle_gallery", events);
 
+		let help;
 		if(response.hasSuccess())
 		{
-			previous = {
-				id: this.props.gallery_id,
-				name: this.state.gallery.value,
-				type: this.state.type,
-				images: this.state.images.map((img: Candidate) => img.reduce())
-			};
-			let i : Candidate[] = this.state.images.map((img: Candidate) => {img.reset(); return img;});
-			await this.setState({images: i, button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: {text: "Galerie erfolgreich gespeichert", color: "green"}});
+			console.log("Gallery Hash:", gallery_hash);
+			if(gallery_hash !== "")
+			{
+				let d : any[] = response.getData();
+				console.log("Data", d);
+				let id = d.filter(el => el.event === gallery_hash)[0].id;
+				console.log(id);
+				await this.get_data(id);
+			} else {
+				await this.get_data();
+			}
+			console.log(this.state);
+			help = {text: "Galerie erfolgreich gespeichert", color: "green"};
 		} else {
-			await this.setState({button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: {text: "Fehler beim Speichern", color: "red"}});
+			help = {text: "Fehler beim Speichern", color: "red"};
 		}
+		await this.setState({button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: help});
 
 	}
 

@@ -1,10 +1,10 @@
 # Candidate Gallery
 
-##TODO:
+## TODO:
 
-* Update IDs when handling add event response
-* Fade success msg
-* Add Menu to front page
-* Get images from db => order by position
-* Add "change image" action to gallery
-* ...
+:heavy_check_mark: Update IDs when handling add event response
+:x: Fade success msg
+:x: Add Menu to front page
+:heavy_check_mark: Get images from db => order by position
+:x: Add "change image" action to gallery
+:x: ...

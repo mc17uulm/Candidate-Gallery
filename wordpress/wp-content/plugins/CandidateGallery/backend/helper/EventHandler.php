@@ -133,7 +133,7 @@ class EventHandler
                     intval($data["position"])
                 );
                 return array("event" => $event->get_hash(), "id" => $id, "name" => $data["name"]);
-            } else if (empty($data["gallery_id"]) && self::$gallery_id !== -1)
+            } else if (!empty($data["gallery_id"]) && $data["gallery_id"] === -1 && self::$gallery_id !== -1)
             {
                 $id = Database::add_picture(
                     self::$gallery_id,

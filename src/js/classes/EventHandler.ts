@@ -15,9 +15,6 @@ export default class EventHandler
     public static create_event_loop(previous: Container, now: Container) : Event[]
     {
 
-        console.log(previous);
-        console.log(now);
-
         let events : Event[] = [];
 
         if(typeof previous === "undefined")
