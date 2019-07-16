@@ -1,38 +1,39 @@
 import React, {Component, FormEvent, ReactNode, MouseEvent} from "react";
 import validator from "email-validator";
 import FontAwesome from "react-fontawesome";
-import FormGroup from "../form/FormGroup";
-import Input, { InputObject } from "../form/Input";
-import ImageForm from "../form/ImageForm";
-import Select from "../form/Select";
+import FormGroup from "./FormGroup";
+import Input, { InputObject } from "./Input";
+import ImageForm from "./ImageForm";
+import Select from "./Select";
 import Candidate from "../classes/Candidate";
 import APIHandler from "../classes/APIHandler";
 import Response from "../classes/Response";
-import Button from "../form/Button";
-import HelpText from "../form/HelpText";
+import Button from "./Button";
+import HelpText from "./HelpText";
 import EventHandler, { Container } from "../classes/EventHandler";
 
-interface NameFormProps {
+interface FormProps {
 	gallery_id?: number,
 	type: "add" | "edit"
 }
 
-interface NameFormState {
+interface FormState {
 	gallery: InputObject<string>,
 	type: string,
 	images: Candidate[],
 	button: ReactNode,
 	help: {
 		text: string,
-		color?: "green" | "red" 
+		color?: "green" | "red",
+		fade?: boolean 
 	},
 	previous?: Container
 }
 
-export default class NameForm extends Component<NameFormProps, NameFormState>
+export default class Form extends Component<FormProps, FormState>
 {
 
-	constructor(props: NameFormProps)
+	constructor(props: FormProps)
 	{
 		super(props);
 
@@ -107,7 +108,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 
 		this.setState({
 			[id]: value
-		} as Pick<NameFormState, keyof NameFormState>);
+		} as Pick<FormState, keyof FormState>);
 	}
 
 	updateImage(id: string, value: any, index: number)
@@ -167,26 +168,20 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 			gallery_hash = events[0].hash;
 		}
 
-		console.log("Events", events);
-
 		let response : Response = await APIHandler.post("handle_gallery", events);
 
 		let help;
 		if(response.hasSuccess())
 		{
-			console.log("Gallery Hash:", gallery_hash);
 			if(gallery_hash !== "")
 			{
 				let d : any[] = response.getData();
-				console.log("Data", d);
 				let id = d.filter(el => el.event === gallery_hash)[0].id;
-				console.log(id);
 				await this.get_data(id);
 			} else {
 				await this.get_data();
 			}
-			console.log(this.state);
-			help = {text: "Galerie erfolgreich gespeichert", color: "green"};
+			help = {text: "Galerie erfolgreich gespeichert", color: "green", fade: true};
 		} else {
 			help = {text: "Fehler beim Speichern", color: "red"};
 		}
@@ -211,7 +206,7 @@ export default class NameForm extends Component<NameFormProps, NameFormState>
 				</FormGroup>
 				<div className="cg_button_group">
 					<Button color="green" callback={this.save} >{this.state.button}</Button> 
-					<HelpText color={this.state.help.color}>{this.state.help.text}</HelpText>
+					<HelpText fade={this.state.help.fade} color={this.state.help.color}>{this.state.help.text}</HelpText>
 				</div>
 
 			</form>

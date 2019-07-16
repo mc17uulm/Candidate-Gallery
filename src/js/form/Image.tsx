@@ -80,7 +80,10 @@ class Image extends Component<ImageProps>
 		return (
 			<div className="cg_image_container">
 				{this.props.image.get_url() ? (
-					<img className="cg_image" src={this.props.image.get_url()}/>
+					<React.Fragment>
+						<img className="cg_image" src={this.props.image.get_url()}/>
+						<button className="cg_image_button" onClick={this.addImage}><FontAwesome name="refresh" /> Change Image</button>
+					</React.Fragment>
 				) : (<div className="cg_image">
 						<Button callback={this.addImage}>Add Image</Button>
 					</div>)	}
