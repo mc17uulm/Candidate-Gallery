@@ -7,10 +7,14 @@ registerBlockType('candidate-gallery/gallery-block', {
     title: 'Candidate Gallery',
     icon: 'universal-access-alt',
     category: 'common',
-    edit() {
-        return <App type="edit" />
+    attributes: {
+        gallery: {}
     },
-    save() {
-        return <App type="save" />
+    edit(props) {
+        console.log(props);
+        return <App type="edit" setAttributes={props.setAttributes} attributes={props.attributes}/>
+    },
+    save(props) {
+        return <App type="save" attributes={props.attributes}/>
     }
 });

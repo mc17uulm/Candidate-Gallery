@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import Candidate from "./Candidate";
 
 export interface IGallery {
 	name?: string,
@@ -36,6 +37,9 @@ export default class Gallery extends Component<GalleryProps>
 				<div>
 					<h2>{this.props.gallery.name}</h2>
 					<small>Design: {this.props.gallery.type} | Kandidat*innen: {this.props.gallery.pictures.length}</small>
+					{this.props.gallery.pictures.map(el => (
+						<Candidate {...el} />
+					))}
 				</div>
 			)
 		}

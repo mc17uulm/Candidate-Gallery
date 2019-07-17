@@ -10,7 +10,11 @@ export interface Vars {
 };
 
 interface AppProps {
-	type: "edit" | "save"
+	type: "edit" | "save",
+	attributes: {
+		gallery: any
+	},
+	setAttributes: (attributes: any) => void
 }
 
 interface AppState {
@@ -46,8 +50,15 @@ export default class App extends Component<AppProps, AppState>
 		let response : Response = await APIHandler.post("get_galleries", {});
 		if(response.hasSuccess())
 		{
-			await this.setState({galleries: response.getData(), value: response.getData()[0].name, id: response.getData()[0].id});
-			await this.update();
+			if(typeof this.props.attributes.gallery === "undefined")
+			{
+				await this.setState({galleries: response.getData(), value: response.getData()[0].name, id: response.getData()[0].id});
+				await this.update();
+			}
+			else
+			{
+				await this.setState({galleries: response.getData(), value: this.props.attributes.gallery.name, id: this.props.attributes.gallery.id, gallery: this.props.attributes.gallery, loaded: true});
+			}
 		}
 	}
 
@@ -62,21 +73,22 @@ export default class App extends Component<AppProps, AppState>
 
 	async update()
 	{
-		console.log("running");
 		if(this.state.id !== -1)
 		{
 			let response : Response = await APIHandler.post("get_gallery", {id: this.state.id});
 			if(response.hasSuccess())
 			{
 				let data = response.getData();
+				let gallery = {
+					name: data["name"],
+					type: data["type"],
+					pictures: data["pictures"]
+				};
 				await this.setState({
 					loaded: true,
-					gallery: {
-						name: data["name"],
-						type: data["type"],
-						pictures: data["pictures"]
-					}
+					gallery: gallery
 				});
+				this.props.setAttributes({gallery: gallery});
 			}
 		}
 	}
@@ -98,11 +110,22 @@ export default class App extends Component<AppProps, AppState>
 					</div>
 				);
 			case "save": 
-				return (
-					<div>
-						No Content found
-					</div>	
-				)
+				if(typeof this.props.attributes.gallery  === "undefined")
+				{
+					return (
+						<div>
+							No Content found
+						</div>	
+					)
+				}
+				else
+				{
+					return (
+						<div>
+							<Gallery loaded={true} gallery={this.props.attributes.gallery} />
+						</div>
+					)
+				}
 			default:
 				return "";	
 		}
