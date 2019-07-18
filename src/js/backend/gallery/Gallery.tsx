@@ -1,6 +1,6 @@
 import React, {Component, MouseEvent} from "react";
 import GalleryPreview from "./GalleryPreview";
-import { Vars } from "../App";
+import { Vars } from "../Backend";
 
 declare var cg_vars : Vars;
 

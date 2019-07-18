@@ -14,12 +14,12 @@ export interface Vars {
 
 declare var cg_vars : Vars;
 
-interface AppProps {}
+interface BackendProps {}
 
-export default class App extends Component<AppProps>
+export default class Backend extends Component<BackendProps>
 {
 
-    constructor(props: AppProps)
+    constructor(props: BackendProps)
     {
         super(props);
 

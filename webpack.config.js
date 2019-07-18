@@ -62,9 +62,9 @@ let backend = Object.assign({}, config, {
     }
 });
 
-let frontend = Object.assign({}, config, {
-    name: "frontend",
-    entry: "./src/js/frontend",
+let gutenberg = Object.assign({}, config, {
+    name: "gutenberg",
+    entry: "./src/js/gutenberg",
     module: {
         rules: [
             {
@@ -91,7 +91,7 @@ let frontend = Object.assign({}, config, {
         ]
     },
     output: {
-        filename: "cg_frontend.js",
+        filename: "cg_gutenberg.js",
         path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {
@@ -99,6 +99,64 @@ let frontend = Object.assign({}, config, {
     }
 });
 
+let frontend = Object.assign({}, config, {
+    name: "frontend",
+    entry: "./src/js/frontend/",
+    module: {
+        rules: [
+            {
+                test: /\.(js|jsx)$/,
+                exclude: [
+                    /node_modules/,
+                    /dist/,
+                    /vendor/
+                ],
+                use: {
+                    loader: "babel-loader"
+                }
+            }, {
+                test: /\.(ts|tsx)$/,
+                exclude: [
+                    /node_modules/,
+                    /vendor/
+                ],
+                use: [
+                    {
+                        loader: "ts-loader"
+                    }
+                ]
+            }, {
+                test: /\.less$/,
+                exclude: [
+                    /node_modules/,
+                    /dist/,
+                    /vendor/
+                ],
+                use: [
+                    {
+                        loader: "style-loader",
+                    }, {
+                        loader: "typings-for-css-modules-loader",
+                        options: {
+                            modules: true,
+                            namesExport: true
+                        }
+                    },{
+                        loader: "less-loader"
+                    }
+                ]
+            }
+        ]
+    },
+    output: {
+        filename: "cg_frontend.js",
+        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
+    },
+    resolve: {
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
+    }
+});
+
 module.exports = [
-    backend, frontend
+    backend, gutenberg, frontend
 ];

@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import shortid from "shortid";
 import Candidate from "./Candidate";
 
 export interface IGallery {
@@ -18,7 +19,6 @@ export default class Gallery extends Component<GalleryProps>
 	constructor(props: GalleryProps)
 	{
 		super(props);
-	
 	}
 
 	render()
@@ -38,7 +38,7 @@ export default class Gallery extends Component<GalleryProps>
 					<h2>{this.props.gallery.name}</h2>
 					<small>Design: {this.props.gallery.type} | Kandidat*innen: {this.props.gallery.pictures.length}</small>
 					{this.props.gallery.pictures.map(el => (
-						<Candidate {...el} />
+						<Candidate key={shortid.generate()} {...el} />
 					))}
 				</div>
 			)

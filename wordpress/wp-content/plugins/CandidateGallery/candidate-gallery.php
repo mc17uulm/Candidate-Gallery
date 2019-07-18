@@ -24,6 +24,7 @@ use CandidateGallery\App;
 use CandidateGallery\helper\Database;
 use CandidateGallery\API;
 use CandidateGallery\View;
+use CandidateGallery\Gallery;
 
 function cg_initialize()
 {
@@ -38,7 +39,11 @@ function cg_remove()
 function cg_activate()
 {
     wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
-
+    wp_enqueue_script('cg_frontend', plugins_url('dist/cg_frontend.js', __FILE__), array(), false, true);
+    wp_localize_script('cg_backend_render', 'cg_vars', array(
+        'site' => $_GET["page"],
+        'ajax' => admin_url('admin-ajax.php')
+    ));
 }
 
 function cg_load_admin_scripts()
@@ -186,6 +191,14 @@ function cg_shortcode($atts)
     App::handle_shortcode($atts);
 }
 
+function cg_render_gallery($atts)
+{
+    if(empty($atts["gallery"])) {
+        return "CandidateGalleryPlugin - Fehler: Keine Galerie ausgewählt!";
+    }
+    return View::render_gallery($atts["gallery"]);
+}
+
 function cg_load_gutenberg_block()
 {
     if(!function_exists('register_block_type'))
@@ -195,9 +208,9 @@ function cg_load_gutenberg_block()
 
     wp_enqueue_script(
         'cg_gutenberg_plugin',
-        plugins_url('dist/cg_frontend.js', __FILE__),
+        plugins_url('dist/cg_gutenberg.js', __FILE__),
         array('wp-blocks', 'wp-i18n', 'wp-element'),
-        filemtime(plugin_dir_path(__FILE__) . 'dist/cg_frontend.js')
+        filemtime(plugin_dir_path(__FILE__) . 'dist/cg_gutenberg.js')
     );
     wp_localize_script('cg_gutenberg_plugin', 'cg_vars', array(
         'base' => plugin_dir_url(__FILE__),
