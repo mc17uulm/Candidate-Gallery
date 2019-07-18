@@ -23,7 +23,7 @@ export default class Candidate extends Component<CandidateProps>
 	{
 		return (
 			<div>
-				<img src={this.props.picture} alt={this.props.name} style={{width: "400px"}} />
+				<img src={this.props.picture} alt={this.props.name} style={{width: "200px"}} />
 				<h3>{this.props.name}</h3>
 				<i>{this.props.function}</i><br />
 				<strong><a href={this.props.encrypted_email}>{this.props.encrypted_email}</a></strong>

@@ -1,5 +1,5 @@
 import Response from "./Response";
-import { Vars } from "../App";
+import { Vars } from "../Backend";
 
 declare var cg_vars : Vars;
 

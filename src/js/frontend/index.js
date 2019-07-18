@@ -1,19 +1,7 @@
-import App from "./App";
+import Frontend from "./Frontend";
+import ReactDOM from "react-dom";
+import React from "react";
 
-const { __, setLocaleData } = wp.i18n;
-const { registerBlockType } = wp.blocks;
-
-registerBlockType('candidate-gallery/gallery-block', {
-    title: 'Candidate Gallery',
-    icon: 'universal-access-alt',
-    category: 'common',
-    attributes: {
-        gallery: {}
-    },
-    edit(props) {
-        return <App type="edit" setAttributes={props.setAttributes} attributes={props.attributes}/>
-    },
-    save(props) {
-        return <App type="save" attributes={props.attributes}/>
-    }
-});
+const elem = document.getElementById("cg_gallery_frontend");
+const id = elem.getAttribute('defaultvalue');
+elem ? ReactDOM.render(<Frontend id={id} />, elem) : false;

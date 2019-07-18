@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import shortid from "shortid";
-import { Vars } from "../../App";
+import { Vars } from "../../Backend";
 
 declare var cg_vars : Vars;
 

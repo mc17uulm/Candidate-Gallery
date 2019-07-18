@@ -9,7 +9,7 @@ export interface Vars {
     ajax: string
 };
 
-interface AppProps {
+interface BlockProps {
 	type: "edit" | "save",
 	attributes: {
 		gallery: any
@@ -17,7 +17,7 @@ interface AppProps {
 	setAttributes: (attributes: any) => void
 }
 
-interface AppState {
+interface BlockState {
 	galleries: any[],
 	value: string,
 	id: number,
@@ -25,10 +25,10 @@ interface AppState {
 	gallery?: IGallery
 }
 
-export default class App extends Component<AppProps, AppState>
+export default class App extends Component<BlockProps, BlockState>
 {
 
-	constructor(props: AppProps)
+	constructor(props: BlockProps)
 	{
 		super(props);
 
@@ -57,7 +57,12 @@ export default class App extends Component<AppProps, AppState>
 			}
 			else
 			{
-				await this.setState({galleries: response.getData(), value: this.props.attributes.gallery.name, id: this.props.attributes.gallery.id, gallery: this.props.attributes.gallery, loaded: true});
+				let gallery : any[] = response.getData().filter(el => {
+					return el.id === this.props.attributes.gallery.id;
+				});
+				if(gallery.length > 0) {
+					await this.setState({galleries: response.getData(), value: gallery[0].name, id: gallery[0].id, gallery: gallery[0], loaded: true});
+				}
 			}
 		}
 	}
@@ -88,7 +93,7 @@ export default class App extends Component<AppProps, AppState>
 					loaded: true,
 					gallery: gallery
 				});
-				this.props.setAttributes({gallery: gallery});
+				await this.props.setAttributes({gallery: {id: this.state.id}});
 			}
 		}
 	}
@@ -121,9 +126,7 @@ export default class App extends Component<AppProps, AppState>
 				else
 				{
 					return (
-						<div>
-							<Gallery loaded={true} gallery={this.props.attributes.gallery} />
-						</div>
+						<div id="cg_gallery_frontend" defaultValue={this.props.attributes.gallery.id}></div>
 					)
 				}
 			default:

@@ -9,11 +9,14 @@ import Candidate from "../classes/Candidate";
 import APIHandler from "../classes/APIHandler";
 import Response from "../classes/Response";
 import Button from "./Button";
+import ButtonClass from "./../classes/Button";
 import HelpText from "./HelpText";
 import EventHandler, { Container } from "../classes/EventHandler";
-import Modal, { ModalProps } from "./Modal";
-import { Vars } from "../../frontend/App";
+import Modal from "./Modal";
+import ModalClass from "./../classes/Modal";
 import FileHandler, { JSONSchema } from "../classes/FileHandler";
+import Help from "../classes/Help";
+import { Vars } from "../Backend";
 
 declare var cg_vars : Vars;
 
@@ -27,14 +30,12 @@ interface FormState {
 	type: string,
 	images: Candidate[],
 	button: ReactNode,
-	help: {
-		text: string,
-		color?: "green" | "red",
-		fade?: boolean 
-	},
-	modal: ModalProps,
+	help: Help,
+	modal: ModalClass,
 	previous?: Container
 }
+
+const save_btn = <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>;
 
 export default class Form extends Component<FormProps, FormState>
 {
@@ -49,13 +50,14 @@ export default class Form extends Component<FormProps, FormState>
 			gallery: {value: "", error: {active: false}},
 			type: "board",
 			images: [],
-			button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
-			help: {text: ""},
-			modal: {hidden: true}
+			button: save_btn,
+			help: new Help(""),
+			modal: new ModalClass(this.closeModal)
 		}
 
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
+		this.update_error = this.update_error.bind(this);
 		this.closeModal = this.closeModal.bind(this);
 		this.deleteGallery = this.deleteGallery.bind(this);
 		this.save = this.save.bind(this);
@@ -105,19 +107,10 @@ export default class Form extends Component<FormProps, FormState>
 		}
 	}
 
-	closeModal (e: MouseEvent)
+	async handleSubmit(e: FormEvent)
 	{
 		e.preventDefault();
-		let modal = this.state.modal;
-		modal.hidden = true;
-		this.setState({
-			modal: modal
-		});
-	}
-
-	handleSubmit(e: FormEvent)
-	{
-		e.preventDefault();
+		await this.save(null);
 	}
 
 	update(id: string, value: any)
@@ -150,6 +143,33 @@ export default class Form extends Component<FormProps, FormState>
 		});
 	}
 
+	async update_error(text: string, color: "red" | "green", fade: boolean = false)
+	{
+		await this.setState({
+			help: new Help(text, color, fade)
+		});
+	}
+
+	async show_modal(content: ReactNode[] | ReactNode, button: ButtonClass, hidden: boolean)
+	{
+		let modal : ModalClass = this.state.modal;
+		modal.set_content(content);
+		modal.set_button(button);
+		modal.set_hidden(hidden);
+		await this.setState({
+			modal: modal
+		});
+	}
+
+	async closeModal ()
+	{
+		let modal = this.state.modal;
+		modal.set_hidden(true);
+		await this.setState({
+			modal: modal
+		});
+	}
+
 	async save(e: MouseEvent) {
 
 		await this.setState({button: (<React.Fragment><FontAwesome spin name="cog" /> Speichern ...</React.Fragment>)})
@@ -168,14 +188,8 @@ export default class Form extends Component<FormProps, FormState>
 		this.setState({images: images});
 
 		if(!correct) {
-			await this.setState({
-				button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
-				help: {
-					text: "Bitte benötigte Felder ausfüllen",
-					color: "red",
-					fade: true
-				}
-			});
+			await this.setState({button: save_btn});
+			await this.update_error("Bitte benötigete Felder ausfüllen", "red", true);
 			return;
 		}
 
@@ -186,14 +200,8 @@ export default class Form extends Component<FormProps, FormState>
 		});
 
 		if(events.length === 0) {
-			await this.setState({
-				button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
-				help: {
-					text: "Bitte benötigte Felder ausfüllen",
-					color: "red",
-					fade: true
-				}
-			});
+			await this.setState({button: save_btn});
+			await this.update_error("Bitte benötigete Felder ausfüllen", "red", true);
 			return;
 		}
 
@@ -216,11 +224,11 @@ export default class Form extends Component<FormProps, FormState>
 			} else {
 				await this.get_data();
 			}
-			help = {text: "Galerie erfolgreich gespeichert", color: "green", fade: true};
+			help = new Help("Galerie erfolgreich gespeichert", "green", true);
 		} else {
-			help = {text: "Fehler beim Speichern", color: "red"};
+			help = new Help("Fehler beim Speichern", "red");
 		}
-		await this.setState({button: <React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>, help: help});
+		await this.setState({button: save_btn, help: help});
 
 	}
 
@@ -228,8 +236,6 @@ export default class Form extends Component<FormProps, FormState>
 	{
 		e.preventDefault();
 
-		let modal = this.state.modal;
-		modal.hidden = true;
 		let response : Response = await APIHandler.post("delete_gallery", {id: this.state.previous.id});
 		if(response.hasSuccess())
 		{
@@ -237,50 +243,27 @@ export default class Form extends Component<FormProps, FormState>
 		}
 		else
 		{
-			await this.setState({
-				modal: modal,
-				help: {
-					color: "red",
-					text: "Fehler beim Löschen der Galerie",
-					fade: false
-				}
-			});
+			await this.closeModal();
+			await this.update_error("Fehler beim Löschen der Galerie", "red");
 		}
 	}
 
 	async delete(e: MouseEvent)
 	{
-		let modal = this.state.modal;
-		modal.content = (<h3>
-			Möchten Sie wirklich diese Galerie löschen?
-		</h3>);
-		modal.button = {
-			color: "red",
-			title: "Löschen!",
-			callback: this.deleteGallery
-		};
-		modal.hidden = false;
-		await this.setState({
-			modal: modal
-		});
+		this.show_modal(
+			<h3>Möchten Sie wirklich diese Galerie löschen?</h3>, 
+			new ButtonClass(
+				"Löschen!", this.deleteGallery, "red"
+			), 
+			false
+		);
 	}
 
 	async handle_files(files: FileList)
 	{
-		if(files.length === 0 || files.length > 1)
-		{
-			await this.setState({
-				help: {
-					color: "red",
-					text: "Dateifehler",
-					fade: false
-				}
-			});
-			return;
-		} 
+		if(files.length === 0 || files.length > 1) { await this.update_error("Dateifehler", "red");return;} 
 
-		let file : File = files.item(0);
-		let json : any = await FileHandler.read(file);
+		let json : any = await FileHandler.read(files.item(0));
 		try{
 			let content = JSON.parse(json);
 			if(FileHandler.validate(content, JSONSchema.MANDATE))
@@ -298,32 +281,11 @@ export default class Form extends Component<FormProps, FormState>
 					candidate.set_position(images.length);
 					images.push(candidate);
 				});
-				await this.setState({images: images, help: {
-					color: "green",
-					text: "Datensätze hinzugefügt",
-					fade: true
-				}});
-				console.log(this.state.images);
+				await this.update_error("Datensätze hinzugefügt", "green", true);
 			} else {
-				await this.setState({
-					help: {
-						color: "red",
-						text: "Dateifehler",
-						fade: false
-					}
-				});
+				await this.update_error("Dateifehler", "red");
 			}
-		} catch(err)
-		{
-			await this.setState({
-				help: {
-					color: "red",
-					text: "Dateifehler",
-					fade: false
-				}
-			});
-			return;
-		}
+		} catch(err) { await this.update_error("Dateifehler", "red"); return; }
 	}
 	
 	render()
@@ -344,10 +306,9 @@ export default class Form extends Component<FormProps, FormState>
 				<div className="cg_button_group">
 					<Button color="green" callback={this.save} >{this.state.button}</Button> 
 					<Button right color="red" callback={this.delete}><FontAwesome name="trash" /> Galerie löschen</Button>
-					<HelpText fade={this.state.help.fade} color={this.state.help.color}>{this.state.help.text}</HelpText>
+					<HelpText fade={this.state.help.has_to_fade()} color={this.state.help.get_color()}>{this.state.help.get_text()}</HelpText>
 				</div>
-				<Modal {...this.state.modal} close={this.closeModal} />
-
+				<Modal modal={this.state.modal} />
 			</form>
 		);
 	}

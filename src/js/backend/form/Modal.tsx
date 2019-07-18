@@ -1,17 +1,9 @@
-import React, {Component, MouseEvent, ReactNode} from "react";
+import React, {Component} from "react";
+import ModalClass from "./../classes/Modal";
 import Button from "./Button";
 
-export interface AcceptButton {
-	color: "green" | "red" | "blue" | "white",
-	title: string,
-	callback: (e: MouseEvent) => void
-}
-
-export interface ModalProps {
-	hidden: boolean,
-	close?: (e: MouseEvent) => void,
-	button?: AcceptButton,
-	content?: ReactNode[] | ReactNode
+interface ModalProps {
+	modal: ModalClass
 }
 
 export default class Modal extends Component<ModalProps>
@@ -24,18 +16,18 @@ export default class Modal extends Component<ModalProps>
 
 	render()
 	{
-		return this.props.hidden ? "" : (
+		return this.props.modal.is_hidden() ? "" : (
 			<div className="cg_modal">
 				<div className="cg_modal_body">
-					<span className="cg_modal_close" onClick={this.props.close}>&times;</span>
+					<span className="cg_modal_close" onClick={this.props.modal.close}>&times;</span>
 					<div className="cg_modal_content">		
-						{this.props.content}
+						{this.props.modal.get_content()}
 					</div>
-					{this.props.close ? (
-						<Button color="white" callback={this.props.close} >Close</Button>
+					{this.props.modal.close ? (
+						<Button callback={this.props.modal.close} >Close</Button>
 					): ""}
-					{this.props.button ? (
-						<Button right color={this.props.button.color} callback={this.props.button.callback}>{this.props.button.title}</Button>
+					{this.props.modal.get_button() ? (
+						<Button right color={this.props.modal.get_button().get_color()} callback={this.props.modal.get_button().callback}>{this.props.modal.get_button().get_title()}</Button>
 					) : ""}
 				</div>
 			</div>

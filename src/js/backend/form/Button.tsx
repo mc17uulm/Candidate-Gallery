@@ -2,7 +2,7 @@ import React, {Component, MouseEvent, ReactNode} from "react";
 
 interface ButtonProps {
 	children?: ReactNode[] | ReactNode,
-	color?: "red" | "green" | "blue" | "white",
+	color?: "red" | "green" | "default",
 	right?: boolean,
 	disabled?: boolean,
 	callback: (e: MouseEvent, ...args: any[]) => void
@@ -13,7 +13,8 @@ export default class Button extends Component<ButtonProps>
 
 	static defaultProps = {
 		right: false,
-		disabled: false
+		disabled: false,
+		color: "default"
 	}
 
 	constructor(props: ButtonProps)
