@@ -1,5 +1,6 @@
 import React, {Component, MouseEvent} from "react";
 import {SortableElement, SortableHandle} from "react-sortable-hoc";
+import FontAwesome from "react-fontawesome";
 import FormGroup from "./FormGroup";
 import Input from "./Input";
 import Textarea from "./Textarea";
@@ -21,7 +22,7 @@ interface ImageProps {
 	index: number,
 	type: string,
 	image: Candidate,
-	onDelete: (id: number) => void,
+	onDelete: (key: string) => void,
 	update: (id: string, value: any) => void,
 	addImage: (image: Candidate) => void
 }
@@ -58,7 +59,7 @@ class Image extends Component<ImageProps>
 	{
 		e.preventDefault();
 
-		this.props.onDelete(this.props.image.get_id());
+		this.props.onDelete(this.props.image.get_key());
 	}
 
 	addImage(e: MouseEvent)
@@ -79,7 +80,10 @@ class Image extends Component<ImageProps>
 		return (
 			<div className="cg_image_container">
 				{this.props.image.get_url() ? (
-					<img className="cg_image" src={this.props.image.get_url()}/>
+					<React.Fragment>
+						<img className="cg_image" src={this.props.image.get_url()}/>
+						<button className="cg_image_button" onClick={this.addImage}><FontAwesome name="refresh" /> Change Image</button>
+					</React.Fragment>
 				) : (<div className="cg_image">
 						<Button callback={this.addImage}>Add Image</Button>
 					</div>)	}
@@ -97,7 +101,7 @@ class Image extends Component<ImageProps>
 							<Select id="family" small options={[{key: "ledig", value: "Ledig"}, {key: "verheiratet", value: "verheiratet"}, {key: "geschieden", value: "geschieden"}, {key: "verwitwet", value: "verwitwet"}]} update={this.props.update} />
 						</div>
 					) : ""}
-					<button className="cg_button cg_button_red" onClick={this.delete}>Löschen</button>
+					<button className="cg_button cg_button_red" onClick={this.delete}><FontAwesome name="trash" /> Löschen</button>
 					<DragHandle />
 				</FormGroup>
 			</div>

@@ -13,7 +13,7 @@ export type Error = {
 interface InputProps {
 	id: string,
 	value: InputObject<any>,
-	type: "email" | "text" | "number",
+	type: "email" | "text" | "number" | "file",
 	placeholder: string,
 	small?: boolean,
 	required?: boolean,

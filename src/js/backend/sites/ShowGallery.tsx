@@ -3,6 +3,7 @@ import shortid from "shortid";
 import Response from "../classes/Response";
 import APIHandler from "../classes/APIHandler";
 import Gallery, { GalleryProps } from "../gallery/Gallery";
+import Menu from "./main/Menu";
 
 interface ShowGalleryProps {}
 
@@ -46,7 +47,9 @@ export default class ShowGallery extends Component<ShowGalleryProps, ShowGallery
 	{
 		return (
 			<div className="cg_box">
-				<h1 className="cg_title">Your Galleries</h1>
+				<h1 className="cg_title">Candidate Gallery <small>Version 1.0</small></h1>
+				<Menu />
+				<h3 className="cg_title">Deine Galerien</h3>
 				{this.state.galleries.map((el: GalleryProps) => (
 					<Gallery key={shortid.generate()} {...el} />
 				))}

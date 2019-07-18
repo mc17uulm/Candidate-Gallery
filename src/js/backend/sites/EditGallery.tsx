@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import NameForm from "../add_form/NameForm";
+import Form from "../form/Form";
 
 interface EditGalleryProps {
 	id: number
@@ -19,7 +19,7 @@ export default class EditGallery extends Component<EditGalleryProps>
 		return (
 			<div className="cg_box">
                 <h1 className="cg_title">Edit Gallery</h1>
-				<NameForm type="edit" gallery_id={this.props.id} />
+				<Form type="edit" gallery_id={this.props.id} />
             </div>
 		);
 	}

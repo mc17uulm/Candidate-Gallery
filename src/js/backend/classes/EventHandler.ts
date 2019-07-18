@@ -15,9 +15,6 @@ export default class EventHandler
     public static create_event_loop(previous: Container, now: Container) : Event[]
     {
 
-        console.log(previous);
-        console.log(now);
-
         let events : Event[] = [];
 
         if(typeof previous === "undefined")
@@ -32,7 +29,6 @@ export default class EventHandler
         {
             if((previous.name !== now.name) || (previous.type !== now.type))
             {
-                console.log("different gallery");
                 events.push(new Event(EventType.Edit, EventCategory.Gallery, {id: previous.id, name: now.name, type: now.type}));
             }
 
@@ -51,6 +47,7 @@ export default class EventHandler
 
                 if(!inOld)
                 {
+                    image.gallery_id = previous.id;
                     events.push(new Event(EventType.Add, EventCategory.Picture, image));
                 }
 

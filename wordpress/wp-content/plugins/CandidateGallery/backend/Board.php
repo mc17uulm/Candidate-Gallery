@@ -4,7 +4,7 @@ namespace CandidateGallery;
 
 use CandidateGallery\helper\Encryption;
 
-class Board extends Picture
+class Board extends Picture implements Person
 {
 
     private $email;
@@ -37,6 +37,16 @@ class Board extends Picture
     public function get_statement() : string
     {
         return $this->statement;
+    }
+
+    public function parse() : array
+    {
+        return array_merge(parent::parse(), array(
+            "email" => $this->email,
+            "encrypted_email" => $this->get_encrypted_email(),
+            "function" => $this->function,
+            "statement" => $this->statement
+        ));
     }
 
 }

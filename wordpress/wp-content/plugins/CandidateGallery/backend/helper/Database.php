@@ -17,7 +17,7 @@ class Database
             $gallery = new Gallery($res[0]->name, $res[0]->type);
             $gallery->set_id($id);
             $gallery->set_pictures(self::get_pictures($id));
-            return new Response(true, $gallery->jsonSerialize());
+            return new Response(true, $gallery->parse());
         }
         return new Response(false, "Database Error");
     }
@@ -52,12 +52,22 @@ class Database
         return $wpdb->update($wpdb->prefix . "gc_gallery", array('name' => $name, 'type' => $type), array("id" => $id)) != 0;
     }
 
-    public static function delete_gallery(int $id) : void
+    public static function delete_gallery(array $data) : Response
     {
-        global $wpdb;
 
-        $wpdb->delete($wpdb->prefix . "gc_picture", array('gallery_id' => $id));
-        $wpdb->delete($wpdb->prefix . "gc_gallery", array('id' => $id));
+        if(!empty($data["id"]) && is_int($data["id"]))
+        {
+            $id = intval($data["id"]);
+
+            global $wpdb;
+
+            $wpdb->delete($wpdb->prefix . "gc_picture", array('gallery_id' => $id));
+            $wpdb->delete($wpdb->prefix . "gc_gallery", array('id' => $id));
+
+            return new Response(true);
+        }
+
+        return new Response(false, "Invalid request format");
     }
 
     public static function add_picture(int $gallery_id, string $name, string $picture, string $statement, string $email, string $function, int $position) : int

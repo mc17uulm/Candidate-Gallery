@@ -22,7 +22,7 @@ export default class Gallery extends Component<GalleryProps>
 
 	handleClick(e: MouseEvent)
 	{
-		window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname + "?page=cg_edit_gallery&id=" + this.props.id;
+		window.location.href = `${cg_vars.base}?page=cg_edit_gallery&id=${this.props.id}`;
 	}
 
 	render()

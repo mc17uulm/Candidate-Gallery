@@ -7,6 +7,7 @@ import ShowGallery from "./sites/ShowGallery";
 
 export interface Vars {
     base: string,
+    plugin_dir_base: string,
     site: string,
     ajax: string
 };

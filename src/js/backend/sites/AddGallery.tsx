@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import NameForm from "../add_form/NameForm";
+import Form from "../form/Form";
 
 interface AddGalleryProps {}
 
@@ -15,8 +15,8 @@ export default class AddGallery extends Component<AddGalleryProps>
 	{
 		return (
 			<div className="cg_box">
-                <h1 className="cg_title">Add new Gallery</h1>
-                <NameForm type="add" />
+                <h1 className="cg_title">Neue Galerie hinzufügen</h1>
+                <Form type="add" />
             </div>
 		);
 	}

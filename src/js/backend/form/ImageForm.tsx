@@ -1,15 +1,18 @@
 import React, {Component, MouseEvent} from "react";
+import FontAwesome from "react-fontawesome";
 import ImageButton from "./ImageButton";
 import ImageGallery from "./ImageGallery";
 import arrayMove from "array-move";
 import Candidate from "../classes/Candidate";
 import Button from "./Button";
 import ButtonGroup from "./ButtonGroup";
+import FileButton from "./FileButton";
 
 interface ImageFormProps {
 	id: string,
 	images: Candidate[],
 	type: string,
+	handleFiles: (files: FileList) => void,
 	update: (id: string, value: Candidate[]) => void,
 	updateImage: (id: string, value: any, index: number) => void
 }
@@ -33,9 +36,9 @@ export default class ImageForm extends Component<ImageFormProps>
 		this.props.update(this.props.id, images);
 	}
 
-	deleteImage(id: number)
+	deleteImage(key: string)
 	{
-		let images = this.props.images.filter(el => el.get_id() !== id);
+		let images = this.props.images.filter(el => el.get_key() !== key);
 		this.props.update(this.props.id, images);
 	}
 
@@ -48,18 +51,13 @@ export default class ImageForm extends Component<ImageFormProps>
 		}));
 	}
 
-	addData(e: MouseEvent)
-	{
-
-	}
-
 	render()
 	{
 		return (
 			<div>
 				<ButtonGroup>
-					<ImageButton add={this.addImage} />
-					<Button callback={this.addData}>Add Data</Button>
+					<ImageButton size={this.props.images.length} add={this.addImage} />
+					<FileButton types={["application/json"]} handleFiles={this.props.handleFiles}><FontAwesome name="cloud-upload" /> Datensatz hochladen</FileButton>
 				</ButtonGroup>
 				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage} addImage={this.addImage}/>
 			</div>

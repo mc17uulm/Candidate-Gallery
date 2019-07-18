@@ -30,7 +30,7 @@ export default class Response
         return this.type === "success";
     }
 
-    public getData()
+    public getData() : any
     {
         return this.msg;
     }

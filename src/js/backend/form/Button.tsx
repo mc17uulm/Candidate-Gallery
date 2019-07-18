@@ -2,12 +2,19 @@ import React, {Component, MouseEvent, ReactNode} from "react";
 
 interface ButtonProps {
 	children?: ReactNode[] | ReactNode,
-	color?: "red" | "green" | "blue",
-	callback: (e: MouseEvent) => void
+	color?: "red" | "green" | "blue" | "white",
+	right?: boolean,
+	disabled?: boolean,
+	callback: (e: MouseEvent, ...args: any[]) => void
 }
 
 export default class Button extends Component<ButtonProps>
 {
+
+	static defaultProps = {
+		right: false,
+		disabled: false
+	}
 
 	constructor(props: ButtonProps)
 	{
@@ -25,7 +32,7 @@ export default class Button extends Component<ButtonProps>
 	render()
 	{
 		return (
-			<button className={"cg_button" + (this.props.color ? " cg_button_" + this.props.color : "")} onClick={this.handleClick}>
+			<button className={"cg_button" + (this.props.color ? " cg_button_" + this.props.color : "")} onClick={this.handleClick} style={this.props.right ? {float: "right"} : {}} disabled={this.props.disabled}>
 				{this.props.children}
 			</button>
 		);

@@ -2,6 +2,7 @@ import React, {Component, ReactNode} from "react";
 
 interface HelpTextProps {
 	children?: ReactNode[] | ReactNode,
+	fade?: boolean,
 	color?: "green" | "red"
 }
 
@@ -9,7 +10,8 @@ export default class HelpText extends Component<HelpTextProps>
 {
 
 	static defaultProps = {
-		color: "green"
+		color: "green",
+		fade: false
 	}
 
 	constructor(props: HelpTextProps)
@@ -20,7 +22,7 @@ export default class HelpText extends Component<HelpTextProps>
 	render()
 	{
 		return (
-			<div className={"cg_help_text" + (this.props.color === "green" ? " cg_green" : "cg_red")}>
+			<div className={"cg_help_text" + (this.props.color === "green" ? " cg_green" : " cg_red") + (this.props.fade ? " fade" : "")}>
 				{this.props.children}
 			</div>
 		);
