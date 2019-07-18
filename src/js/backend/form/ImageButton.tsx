@@ -39,7 +39,7 @@ export default class ImageButton extends Component<ImageButtonProps>
 	render()
 	{
 		return (
-			<button className="cg_button" onClick={this.handleClick}><FontAwesome name="plus" /> Add Images</button>
+			<button className="cg_button" onClick={this.handleClick}><FontAwesome name="plus" /> Bilder hinzufügen</button>
 		);
 	}
 

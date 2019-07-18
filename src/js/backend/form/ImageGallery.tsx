@@ -27,7 +27,7 @@ class ImageGallery extends Component<ImageGalleryProps>
 						<Image image={image} type={this.props.type} index={index} key={`image-${index}`} onDelete={this.props.onDelete} update={(id: string, value: any) => {this.props.update(id, value, index)}} addImage={this.props.addImage} />
 						
 				)) : (
-					<span className="cg_gallery_container_info">No files selected</span>
+					<span className="cg_gallery_container_info">Keine Bilder/Datensätze ausgewählt</span>
 				)}
 			</div>
 		);

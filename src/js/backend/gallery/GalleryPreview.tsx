@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import shortid from "shortid";
 import { Vars } from "../App";
 
 declare var cg_vars : Vars;
@@ -26,9 +27,9 @@ export default class GalleryPreview extends Component<GalleryPreviewProps>
 			<div className="cg_gallery_preview">
 				{arr.map(img => {
 					return img === "" ? (
-						<img className="cg_gallery_image" src={cg_vars.base + "lib/img_background.png"} />
+						<img key={shortid.generate()} className="cg_gallery_image" src={cg_vars.plugin_dir_base + "lib/img_background.png"} />
 					) : (
-						<img className="cg_gallery_image" src={img} />
+						<img key={shortid.generate()} className="cg_gallery_image" src={img} />
 					)
 				})}
 			</div>

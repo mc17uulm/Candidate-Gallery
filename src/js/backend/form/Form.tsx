@@ -11,6 +11,11 @@ import Response from "../classes/Response";
 import Button from "./Button";
 import HelpText from "./HelpText";
 import EventHandler, { Container } from "../classes/EventHandler";
+import Modal, { ModalProps } from "./Modal";
+import { Vars } from "../../frontend/App";
+import FileHandler, { JSONSchema } from "../classes/FileHandler";
+
+declare var cg_vars : Vars;
 
 interface FormProps {
 	gallery_id?: number,
@@ -27,6 +32,7 @@ interface FormState {
 		color?: "green" | "red",
 		fade?: boolean 
 	},
+	modal: ModalProps,
 	previous?: Container
 }
 
@@ -44,13 +50,18 @@ export default class Form extends Component<FormProps, FormState>
 			type: "board",
 			images: [],
 			button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
-			help: {text: ""}
+			help: {text: ""},
+			modal: {hidden: true}
 		}
 
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
+		this.closeModal = this.closeModal.bind(this);
+		this.deleteGallery = this.deleteGallery.bind(this);
 		this.save = this.save.bind(this);
+		this.delete = this.delete.bind(this);
 		this.get_data = this.get_data.bind(this);
+		this.handle_files = this.handle_files.bind(this);
 	}
 
 	async componentWillMount()
@@ -92,6 +103,16 @@ export default class Form extends Component<FormProps, FormState>
 				});
 			}
 		}
+	}
+
+	closeModal (e: MouseEvent)
+	{
+		e.preventDefault();
+		let modal = this.state.modal;
+		modal.hidden = true;
+		this.setState({
+			modal: modal
+		});
 	}
 
 	handleSubmit(e: FormEvent)
@@ -147,7 +168,14 @@ export default class Form extends Component<FormProps, FormState>
 		this.setState({images: images});
 
 		if(!correct) {
-			await this.setState({button: "Speichern"});
+			await this.setState({
+				button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
+				help: {
+					text: "Bitte benötigte Felder ausfüllen",
+					color: "red",
+					fade: true
+				}
+			});
 			return;
 		}
 
@@ -158,7 +186,14 @@ export default class Form extends Component<FormProps, FormState>
 		});
 
 		if(events.length === 0) {
-			await this.setState({button: "Speichern"});
+			await this.setState({
+				button: (<React.Fragment><FontAwesome name="cloud-upload" /> Speichern</React.Fragment>),
+				help: {
+					text: "Bitte benötigte Felder ausfüllen",
+					color: "red",
+					fade: true
+				}
+			});
 			return;
 		}
 
@@ -189,25 +224,129 @@ export default class Form extends Component<FormProps, FormState>
 
 	}
 
+	async deleteGallery(e: MouseEvent)
+	{
+		e.preventDefault();
+
+		let modal = this.state.modal;
+		modal.hidden = true;
+		let response : Response = await APIHandler.post("delete_gallery", {id: this.state.previous.id});
+		if(response.hasSuccess())
+		{
+			window.location.href = `${cg_vars.base}?page=candidate-gallery`;
+		}
+		else
+		{
+			await this.setState({
+				modal: modal,
+				help: {
+					color: "red",
+					text: "Fehler beim Löschen der Galerie",
+					fade: false
+				}
+			});
+		}
+	}
+
+	async delete(e: MouseEvent)
+	{
+		let modal = this.state.modal;
+		modal.content = (<h3>
+			Möchten Sie wirklich diese Galerie löschen?
+		</h3>);
+		modal.button = {
+			color: "red",
+			title: "Löschen!",
+			callback: this.deleteGallery
+		};
+		modal.hidden = false;
+		await this.setState({
+			modal: modal
+		});
+	}
+
+	async handle_files(files: FileList)
+	{
+		if(files.length === 0 || files.length > 1)
+		{
+			await this.setState({
+				help: {
+					color: "red",
+					text: "Dateifehler",
+					fade: false
+				}
+			});
+			return;
+		} 
+
+		let file : File = files.item(0);
+		let json : any = await FileHandler.read(file);
+		try{
+			let content = JSON.parse(json);
+			if(FileHandler.validate(content, JSONSchema.MANDATE))
+			{
+				let images = this.state.images;
+				content.map(el => {
+					let candidate = new Candidate(
+						el.url || "",
+						-1,
+						el.name || "",
+						el.email || "",
+						el.function || "",
+						el.statement || ""
+					);
+					candidate.set_position(images.length);
+					images.push(candidate);
+				});
+				await this.setState({images: images, help: {
+					color: "green",
+					text: "Datensätze hinzugefügt",
+					fade: true
+				}});
+				console.log(this.state.images);
+			} else {
+				await this.setState({
+					help: {
+						color: "red",
+						text: "Dateifehler",
+						fade: false
+					}
+				});
+			}
+		} catch(err)
+		{
+			await this.setState({
+				help: {
+					color: "red",
+					text: "Dateifehler",
+					fade: false
+				}
+			});
+			return;
+		}
+	}
+	
 	render()
 	{
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<FormGroup>
-					<label className="cg_label">Gallery Name:</label>
-					<Input id="gallery" type="text" value={this.state.gallery} placeholder="Gallery Name" update={this.update}/>
+					<label className="cg_label">Name der Galerie:</label>
+					<Input id="gallery" type="text" value={this.state.gallery} placeholder="Name der Galerie" update={this.update}/>
 				</FormGroup>
 				<FormGroup>
-					<label className="cg_label">Type:</label>
+					<label className="cg_label">Art:</label>
 					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
 				</FormGroup>
 				<FormGroup>
-					<ImageForm type={this.state.type} id="images" images={this.state.images} update={this.update} updateImage={this.updateImage} />
+					<ImageForm type={this.state.type} id="images" images={this.state.images} update={this.update} updateImage={this.updateImage} handleFiles={this.handle_files} />
 				</FormGroup>
 				<div className="cg_button_group">
 					<Button color="green" callback={this.save} >{this.state.button}</Button> 
+					<Button right color="red" callback={this.delete}><FontAwesome name="trash" /> Galerie löschen</Button>
 					<HelpText fade={this.state.help.fade} color={this.state.help.color}>{this.state.help.text}</HelpText>
 				</div>
+				<Modal {...this.state.modal} close={this.closeModal} />
 
 			</form>
 		);

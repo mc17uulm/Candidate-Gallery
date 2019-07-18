@@ -6,11 +6,13 @@ import arrayMove from "array-move";
 import Candidate from "../classes/Candidate";
 import Button from "./Button";
 import ButtonGroup from "./ButtonGroup";
+import FileButton from "./FileButton";
 
 interface ImageFormProps {
 	id: string,
 	images: Candidate[],
 	type: string,
+	handleFiles: (files: FileList) => void,
 	update: (id: string, value: Candidate[]) => void,
 	updateImage: (id: string, value: any, index: number) => void
 }
@@ -49,18 +51,13 @@ export default class ImageForm extends Component<ImageFormProps>
 		}));
 	}
 
-	addData(e: MouseEvent)
-	{
-
-	}
-
 	render()
 	{
 		return (
 			<div>
 				<ButtonGroup>
 					<ImageButton size={this.props.images.length} add={this.addImage} />
-					<Button callback={this.addData}><FontAwesome name="plus" /> Add Data</Button>
+					<FileButton types={["application/json"]} handleFiles={this.props.handleFiles}><FontAwesome name="cloud-upload" /> Datensatz hochladen</FileButton>
 				</ButtonGroup>
 				<ImageGallery type={this.props.type} useDragHandle={true} axis="xy" images={this.props.images} onDelete={this.deleteImage} onSortEnd={this.onSortEnd} update={this.props.updateImage} addImage={this.addImage}/>
 			</div>

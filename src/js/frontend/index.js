@@ -11,7 +11,6 @@ registerBlockType('candidate-gallery/gallery-block', {
         gallery: {}
     },
     edit(props) {
-        console.log(props);
         return <App type="edit" setAttributes={props.setAttributes} attributes={props.attributes}/>
     },
     save(props) {

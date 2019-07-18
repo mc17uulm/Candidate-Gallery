@@ -43,6 +43,9 @@ class API
                         case "get_galleries":
                             $response = Database::get_galleries();
                             break;
+                        case "delete_gallery":
+                            $response = Database::delete_gallery($json["data"]);
+                            break;
                         default:
                             $response->setError("Invalid request format");
                             break;
