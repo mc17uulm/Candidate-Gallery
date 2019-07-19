@@ -1,6 +1,7 @@
 .idea/
 test.php
 .vscode/
+build/
 node_modules/
 wordpress/*
 !wordpress/wp-content/

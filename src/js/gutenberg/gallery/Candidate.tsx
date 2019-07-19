@@ -22,11 +22,11 @@ export default class Candidate extends Component<CandidateProps>
 	render()
 	{
 		return (
-			<div>
-				<img src={this.props.picture} alt={this.props.name} style={{width: "200px"}} />
-				<h3>{this.props.name}</h3>
-				<i>{this.props.function}</i><br />
-				<strong><a href={this.props.encrypted_email}>{this.props.encrypted_email}</a></strong>
+			<div className="cg_image_container">
+				<img className="cg_image" src={this.props.picture} alt={this.props.name} />
+				<h4>{this.props.name}</h4>
+				<span className="cg_image_container_func">{this.props.function}</span><br />
+				<strong><a href={"mailto:" + this.props.email}>{this.props.email}</a></strong>
 			</div>
 		);
 	}
