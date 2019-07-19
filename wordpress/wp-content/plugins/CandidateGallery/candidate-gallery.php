@@ -102,9 +102,9 @@ add_action('init', function ()
 });
 
 add_action('admin_menu', function() {
-    $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", function() { View::render(); }, "dashicons-admin-network");
-    add_submenu_page('candidate-gallery', 'Add Gallery', 'Add Gallery', 'manage_options', 'cg_add_gallery', function() { View::render(); });
-    add_submenu_page('candidate-gallery', 'Edit Gallery', 'Edit Gallery', 'manage_options', 'cg_edit_gallery', function() { View::render(); });
+    $page = add_menu_page('Candidate Gallery', 'Candidate Gallery', 'manage_options', "candidate-gallery", function() { View::render(); }, "dashicons-format-gallery");
+    add_submenu_page('candidate-gallery', 'Galerie hinzufügen', 'Galerie hinzufügen', 'manage_options', 'cg_add_gallery', function() { View::render(); });
+    add_submenu_page('candidate-gallery', 'Galerie bearbeiten', 'Galerie bearbeiten', 'manage_options', 'cg_edit_gallery', function() { View::render(); });
 });
 
 // Enable ajax request routing - nopriv
@@ -119,7 +119,7 @@ add_action('wp_ajax_cg_ajax', function() {
 
 // Render shortcode
 add_shortcode('candidate_gallery', function ($atts) {
-    App::handle_shortcode($atts);
+    return App::handle_shortcode($atts);
 });
 
 add_action('plugins_loaded', function ()
