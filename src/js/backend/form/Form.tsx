@@ -17,6 +17,7 @@ import ModalClass from "./../classes/Modal";
 import FileHandler, { JSONSchema } from "../classes/FileHandler";
 import Help from "../classes/Help";
 import { Vars } from "../Backend";
+import Shortcode from "./Shortcode";
 
 declare var cg_vars : Vars;
 
@@ -26,6 +27,7 @@ interface FormProps {
 }
 
 interface FormState {
+	id: number,
 	gallery: InputObject<string>,
 	type: string,
 	images: Candidate[],
@@ -47,6 +49,7 @@ export default class Form extends Component<FormProps, FormState>
 		this.handleSubmit = this.handleSubmit.bind(this);
 
 		this.state = {
+			id: this.props.gallery_id || -1,
 			gallery: {value: "", error: {active: false}},
 			type: "board",
 			images: [],
@@ -76,6 +79,7 @@ export default class Form extends Component<FormProps, FormState>
 		if(this.props.gallery_id || gallery_id !== -1)
 		{
 			let id = this.props.gallery_id || gallery_id;
+			await this.setState({id: id});
 			let resp : Response = await APIHandler.post("get_gallery", {id: id});
 			
 			if(resp.hasSuccess())
@@ -292,14 +296,22 @@ export default class Form extends Component<FormProps, FormState>
 	{
 		return (
 			<form onSubmit={this.handleSubmit}>
-				<FormGroup>
-					<label className="cg_label">Name der Galerie:</label>
-					<Input id="gallery" type="text" value={this.state.gallery} placeholder="Name der Galerie" update={this.update}/>
-				</FormGroup>
-				<FormGroup>
-					<label className="cg_label">Art:</label>
-					<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
-				</FormGroup>
+				<div className="cg_form_container">
+					<FormGroup left>
+						<label className="cg_label">Name der Galerie:</label>
+						<Input id="gallery" type="text" value={this.state.gallery} placeholder="Name der Galerie" update={this.update}/>
+					</FormGroup>
+					<FormGroup right>
+						<label className="cg_label">Shortcode:</label>
+						<Shortcode id={this.state.id} />
+					</FormGroup>
+				</div>	
+				<div className="cg_form_container">
+					<FormGroup>
+						<label className="cg_label">Art:</label>
+						<Select id="type" update={this.update} options={[{key: "board", value: "Vorstand"}, {key: "delegates", value: "Delegierte"}, {key: "mandates", value: "Mandatsträger*innen"}]}></Select>
+					</FormGroup>
+				</div>
 				<FormGroup>
 					<ImageForm type={this.state.type} id="images" images={this.state.images} update={this.update} updateImage={this.updateImage} handleFiles={this.handle_files} />
 				</FormGroup>

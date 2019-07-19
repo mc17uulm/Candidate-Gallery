@@ -205,6 +205,36 @@ input[type="file"] {
     color: #CF6F8A;
 }
 
+.cg_form_container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    float: left;
+}
+
+.cg_shortcode {
+    text-align: right;
+    padding-right: 15px;
+    background: white;
+    margin-top: 10px;
+    width: 350px;
+    padding-bottom: 11px;
+    border-radius: 3px;
+    padding-top: 11px;
+    font-size: 16px;
+    font-family: "Consolas"
+}
+
+.cg_form_container .form_group {
+    width: 400px;
+    float: left;
+}
+
+.cg_form_container .cg_shortcode {
+    width: 400px;
+    float: left;
+}
+
 .cg_gallery_container {
     position: relative;
     margin-top: 15px;

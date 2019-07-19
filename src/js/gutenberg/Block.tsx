@@ -53,7 +53,6 @@ export default class App extends Component<BlockProps, BlockState>
 			if(typeof this.props.attributes.gallery === "undefined")
 			{
 				await this.setState({galleries: response.getData(), value: response.getData()[0].name, id: response.getData()[0].id});
-				await this.update();
 			}
 			else
 			{
@@ -61,9 +60,10 @@ export default class App extends Component<BlockProps, BlockState>
 					return el.id === this.props.attributes.gallery.id;
 				});
 				if(gallery.length > 0) {
-					await this.setState({galleries: response.getData(), value: gallery[0].name, id: gallery[0].id, gallery: gallery[0], loaded: true});
+					await this.setState({galleries: response.getData(), value: gallery[0].name, id: gallery[0].id});
 				}
 			}
+			await this.update();
 		}
 	}
 
@@ -84,10 +84,13 @@ export default class App extends Component<BlockProps, BlockState>
 			if(response.hasSuccess())
 			{
 				let data = response.getData();
+				let pictures = data["pictures"].sort((a, b) => {
+					return a.position - b.position;
+				})
 				let gallery = {
 					name: data["name"],
 					type: data["type"],
-					pictures: data["pictures"]
+					pictures: pictures
 				};
 				await this.setState({
 					loaded: true,
@@ -105,7 +108,7 @@ export default class App extends Component<BlockProps, BlockState>
 			case "edit":
 				return (
 					<div>
-						<label>Galerie auswählen</label>
+						<label>Galerie auswählen: </label>
 						<select value={this.state.value} onChange={this.handleChange}>
 							{this.state.galleries.map(el => (
 								<option key={shortid.generate()} value={el.id}>{el.name}</option>

@@ -5,7 +5,7 @@ const { registerBlockType } = wp.blocks;
 
 registerBlockType('candidate-gallery/gallery-block', {
     title: 'Candidate Gallery',
-    icon: 'universal-access-alt',
+    icon: 'format-gallery',
     category: 'common',
     attributes: {
         gallery: {}

@@ -82,10 +82,10 @@ class Image extends Component<ImageProps>
 				{this.props.image.get_url() ? (
 					<React.Fragment>
 						<img className="cg_image" src={this.props.image.get_url()}/>
-						<button className="cg_image_button" onClick={this.addImage}><FontAwesome name="refresh" /> Change Image</button>
+						<button className="cg_image_button" onClick={this.addImage}><FontAwesome name="refresh" /> Bild ändern</button>
 					</React.Fragment>
 				) : (<div className="cg_image">
-						<Button callback={this.addImage}>Add Image</Button>
+						<Button callback={this.addImage}>Bild hinzufügen</Button>
 					</div>)	}
 				<FormGroup>
 					<Input id="name" type="text" small placeholder="Name..." value={this.props.image.get_name()} update={this.props.update} />

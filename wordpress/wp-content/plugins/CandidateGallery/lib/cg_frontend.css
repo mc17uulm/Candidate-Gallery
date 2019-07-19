@@ -1,0 +1,65 @@
+.cg_gallery_container {
+    position: relative;
+    margin-left: -32px;
+    width: 100%;
+    height: auto;
+    min-height: 380px;
+    padding-top: 35px;
+    padding-bottom: 15px;
+    padding-left: 32px;
+    padding-right: 32px;
+    background: #e6e6e6;
+    text-align: center;
+    overflow: hidden; 
+}
+
+.cg_gallery_container h3 {
+    text-align: center;
+    color: #30363D;
+    font-family: 'Arvo Gruen';
+}
+
+.cg_gallery_container h4 {
+    margin-top: 10px;
+    text-align: center;
+    color: #30363D;
+    font-size: 17px;
+    font-family: 'Arvo';
+}
+
+.cg_image_container_func {
+    color: #30363D;
+    font-family: 'PT Sans';
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.cg_gallery_container a {
+    color: #30363D;
+    font-family: 'PT Sans';
+    font-weight: bold;
+    color: #46962b;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.cg_image_container {
+    width: 175px;
+    height: auto;
+    min-height: 200px;
+    max-height: 300px;
+    float: left;
+    margin-top: 15px;
+    margin-left: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.cg_image {
+    display: block;
+    margin-top: 20px;
+    width: 175px;
+    height: 175px;
+    max-height: 250px;
+    object-fit: cover;
+}
