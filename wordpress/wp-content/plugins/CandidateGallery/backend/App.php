@@ -2,16 +2,8 @@
 
 namespace CandidateGallery;
 
-use CandidateGallery\helper\Database;
-
 class App
 {
-
-    public static function activate()
-    {
-        Database::initialize();
-        wp_enqueue_style('cg_style', plugin_dir_url(__FILE__) . 'lib/cg_style.css', array(), false, 'all');
-    }
 
     public static function handle_shortcode($atts) : string
     {

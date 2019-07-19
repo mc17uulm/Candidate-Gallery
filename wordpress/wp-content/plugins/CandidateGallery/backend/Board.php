@@ -6,7 +6,6 @@ use CandidateGallery\helper\Encryption;
 
 class Board extends Picture implements Person
 {
-
     private $email;
     private $function;
     private $statement;
@@ -48,5 +47,4 @@ class Board extends Picture implements Person
             "statement" => $this->statement
         ));
     }
-
 }
