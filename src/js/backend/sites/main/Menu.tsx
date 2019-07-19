@@ -22,7 +22,6 @@ export default class Menu extends Component<MenuProps>
 			<div className="cg_menu">
 				<ul className="cg_menu_list">
 					<li key={shortid.generate()} className="cg_menu_item"><a href={`${cg_vars.base}?page=cg_add_gallery`}>Neue Galerie</a></li>
-					<li key={shortid.generate()} className="cg_menu_item"><a href={`${cg_vars.base}?page=cg_data`}>Datensätze</a></li>
 				</ul>
 			</div>
 		);

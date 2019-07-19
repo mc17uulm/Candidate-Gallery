@@ -334,29 +334,29 @@ input[type="file"] {
 
 .cg_gallery_label {
     position: absolute;
-    margin-top: 115px;
-    margin-left: -100px;
     z-index: 10;
     color: #FFFFFF;
     line-height: 50px;
-    display: inline-block;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
     text-shadow: 0 0 1em #000, 0 0 1em #000, 0 0 1em #000;
     cursor: pointer;
 }
 
 .cg_gallery_preview {
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, 125px);
-    grid-template-rows: repeat(2, 125px);
-    width: 250px;
+    display: table-cell;
+    /* grid-template-columns: repeat(2, 125px);
+    grid-template-rows: repeat(2, 125px); */
+    width: 100%;
     float: left;
 }
 
 .cg_gallery_image {
-    width: 100%;
+    width: 50%;
     height: 100%;
-    object-fit: cover;
+    object-fit: scale-down;
     -webkit-filter: blur(1px);
     filter: blur(1px);
 }
@@ -426,6 +426,3 @@ input[type="file"] {
     text-decoration: none;
     cursor: pointer;
 }
-
-
-

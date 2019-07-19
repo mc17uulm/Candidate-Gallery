@@ -4,7 +4,7 @@
  * Description: Parses json data to candidate gallery - Kommunalwahl 2019 - Grüne Heidenheim
  * Author: mc17uulm
  * Author URI: https://github.com/mc17uulm/Candidate-Gallery
- * Version: 1.0
+ * Version: 1.0.alpha
  * Text Domain : cg_language
  * Domain Path: /lang
  * License: GPLv3
@@ -13,10 +13,12 @@
  *
  * === Plugin Information ===
  *
- * Version: 1.0
+ * Version: 1.0.alpha
  * Date: 19.07.2019
  *
  */
+
+define('CG_VERSION', '1.0.alpha');
 
 require_once 'vendor/autoload.php';
 
@@ -41,6 +43,7 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('cg_gutenberg', plugin_dir_url(__FILE__) . 'lib/cg_frontend.css', array(), false, 'all');
     wp_enqueue_script('cg_frontend', plugins_url('dist/cg_frontend.js', __FILE__), array(), false, true);
     wp_localize_script('cg_backend_render', 'cg_vars', array(
+        'version' => CG_VERSION,
         'site' => $_GET["page"],
         'ajax' => admin_url('admin-ajax.php')
     ));
@@ -63,6 +66,7 @@ add_action('admin_enqueue_scripts', function () {
         {
             wp_enqueue_script('cg_backend_render', plugins_url('dist/cg_backend.js', __FILE__), array('wp-i18n'), false, true);
             wp_localize_script('cg_backend_render', 'cg_vars', array(
+                'version' => CG_VERSION,
                 'base' => admin_url('admin.php'),
                 'plugin_dir_base' => plugin_dir_url(__FILE__),
                 'site' => $_GET["page"],
@@ -95,6 +99,7 @@ add_action('init', function ()
         filemtime(plugin_dir_path(__FILE__) . 'dist/cg_gutenberg.js')
     );
     wp_localize_script('cg_gutenberg_plugin', 'cg_vars', array(
+        'version' => CG_VERSION,
         'base' => plugin_dir_url(__FILE__),
         'ajax' => admin_url('admin-ajax.php')
     ));
