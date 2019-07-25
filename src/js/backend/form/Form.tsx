@@ -1,6 +1,7 @@
 import React, {Component, FormEvent, ReactNode, MouseEvent} from "react";
 import validator from "email-validator";
 import FontAwesome from "react-fontawesome";
+import { ToastContainer, toast } from "react-toastify";
 import FormGroup from "./FormGroup";
 import Input, { InputObject } from "./Input";
 import ImageForm from "./ImageForm";
@@ -10,14 +11,13 @@ import APIHandler from "../classes/APIHandler";
 import Response from "../classes/Response";
 import Button from "./Button";
 import ButtonClass from "./../classes/Button";
-import HelpText from "./HelpText";
 import EventHandler, { Container } from "../classes/EventHandler";
 import Modal from "./Modal";
 import ModalClass from "./../classes/Modal";
 import FileHandler, { JSONSchema } from "../classes/FileHandler";
-import Help from "../classes/Help";
 import { Vars } from "../Backend";
 import Shortcode from "./Shortcode";
+import Icon from "./Icon";
 
 declare var cg_vars : Vars;
 
@@ -32,7 +32,6 @@ interface FormState {
 	type: string,
 	images: Candidate[],
 	button: ReactNode,
-	help: Help,
 	modal: ModalClass,
 	previous?: Container
 }
@@ -54,13 +53,11 @@ export default class Form extends Component<FormProps, FormState>
 			type: "board",
 			images: [],
 			button: save_btn,
-			help: new Help(""),
 			modal: new ModalClass(this.closeModal)
 		}
 
 		this.update = this.update.bind(this);
 		this.updateImage = this.updateImage.bind(this);
-		this.update_error = this.update_error.bind(this);
 		this.closeModal = this.closeModal.bind(this);
 		this.deleteGallery = this.deleteGallery.bind(this);
 		this.save = this.save.bind(this);
@@ -147,13 +144,6 @@ export default class Form extends Component<FormProps, FormState>
 		});
 	}
 
-	async update_error(text: string, color: "red" | "green", fade: boolean = false)
-	{
-		await this.setState({
-			help: new Help(text, color, fade)
-		});
-	}
-
 	async show_modal(content: ReactNode[] | ReactNode, button: ButtonClass, hidden: boolean)
 	{
 		let modal : ModalClass = this.state.modal;
@@ -193,7 +183,9 @@ export default class Form extends Component<FormProps, FormState>
 
 		if(!correct) {
 			await this.setState({button: save_btn});
-			await this.update_error("Bitte benötigete Felder ausfüllen", "red", true);
+			toast.error(<React.Fragment><FontAwesome name="exclamation-circle" /> Bitte die benötigten Felder ausfüllen!</React.Fragment>, {
+				position: toast.POSITION.TOP_RIGHT
+			});
 			return;
 		}
 
@@ -205,7 +197,9 @@ export default class Form extends Component<FormProps, FormState>
 
 		if(events.length === 0) {
 			await this.setState({button: save_btn});
-			await this.update_error("Bitte benötigete Felder ausfüllen", "red", true);
+			toast.error(<React.Fragment><FontAwesome name="exclamation-circle" /> Bitte die benötigten Felder ausfüllen!</React.Fragment>, {
+				position: toast.POSITION.TOP_RIGHT
+			});
 			return;
 		}
 
@@ -217,7 +211,6 @@ export default class Form extends Component<FormProps, FormState>
 
 		let response : Response = await APIHandler.post("handle_gallery", events);
 
-		let help;
 		if(response.hasSuccess())
 		{
 			if(gallery_hash !== "")
@@ -228,11 +221,15 @@ export default class Form extends Component<FormProps, FormState>
 			} else {
 				await this.get_data();
 			}
-			help = new Help("Galerie erfolgreich gespeichert", "green", true);
+			toast.success(<React.Fragment><FontAwesome name="check" /> Galerie erfolgreich gespeichert!</React.Fragment>, {
+				position: toast.POSITION.TOP_RIGHT
+			});
 		} else {
-			help = new Help("Fehler beim Speichern", "red");
+			toast.error(<React.Fragment><FontAwesome name="exclamation-circle" /> Fehler beim Speichern!</React.Fragment>, {
+				position: toast.POSITION.TOP_RIGHT
+			});
 		}
-		await this.setState({button: save_btn, help: help});
+		await this.setState({button: save_btn});
 
 	}
 
@@ -248,7 +245,9 @@ export default class Form extends Component<FormProps, FormState>
 		else
 		{
 			await this.closeModal();
-			await this.update_error("Fehler beim Löschen der Galerie", "red");
+			toast.error(<React.Fragment><FontAwesome name="exclamation-circle" /> Fehler beim Löschen der Galerie!</React.Fragment>, {
+				position: toast.POSITION.TOP_RIGHT
+			});
 		}
 	}
 
@@ -265,7 +264,12 @@ export default class Form extends Component<FormProps, FormState>
 
 	async handle_files(files: FileList)
 	{
-		if(files.length === 0 || files.length > 1) { await this.update_error("Dateifehler", "red");return;} 
+		if(files.length === 0 || files.length > 1) { 
+			toast.error("Dateifehler!", {
+				position: toast.POSITION.TOP_RIGHT
+			});
+			return;
+		} 
 
 		let json : any = await FileHandler.read(files.item(0));
 		try{
@@ -285,11 +289,21 @@ export default class Form extends Component<FormProps, FormState>
 					candidate.set_position(images.length);
 					images.push(candidate);
 				});
-				await this.update_error("Datensätze hinzugefügt", "green", true);
+				await this.setState({images: images});
+				toast.success("Datensatz hinzugefügt!", {
+					position: toast.POSITION.TOP_RIGHT
+				});
 			} else {
-				await this.update_error("Dateifehler", "red");
+				toast.error("Dateifehler!", {
+					position: toast.POSITION.TOP_RIGHT
+				});
 			}
-		} catch(err) { await this.update_error("Dateifehler", "red"); return; }
+		} catch(err) { 
+			toast.error("Dateifehler!", {
+				position: toast.POSITION.TOP_RIGHT
+			});
+			return; 
+		}
 	}
 	
 	render()
@@ -318,9 +332,9 @@ export default class Form extends Component<FormProps, FormState>
 				<div className="cg_button_group">
 					<Button color="green" callback={this.save} >{this.state.button}</Button> 
 					<Button right color="red" callback={this.delete}><FontAwesome name="trash" /> Galerie löschen</Button>
-					<HelpText fade={this.state.help.has_to_fade()} color={this.state.help.get_color()}>{this.state.help.get_text()}</HelpText>
 				</div>
 				<Modal modal={this.state.modal} />
+				<ToastContainer />
 			</form>
 		);
 	}

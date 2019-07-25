@@ -31,7 +31,7 @@ let backend = Object.assign({}, config, {
                     }
                 ]
             }, {
-                test: /\.less$/,
+                test: /\.css$/,
                 exclude: [
                     /node_modules/,
                     /dist/,
@@ -41,13 +41,7 @@ let backend = Object.assign({}, config, {
                     {
                         loader: "style-loader",
                     }, {
-                        loader: "typings-for-css-modules-loader",
-                        options: {
-                            modules: true,
-                            namesExport: true
-                        }
-                    },{
-                        loader: "less-loader"
+                        loader: "css-loader"
                     }
                 ]
             }
@@ -58,7 +52,7 @@ let backend = Object.assign({}, config, {
         path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
     },
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".css"]
     }
 });
 

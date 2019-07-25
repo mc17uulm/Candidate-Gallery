@@ -1,6 +1,6 @@
 x (C) 2019-07-25 2019-07-25 Pictures load sometimes incomplete @backend @gallery-menu
 o (D) 0000-00-00 2019-07-25 Better position for shortcode field @backend @gallery-menu
-o (B) 0000-00-00 2019-07-25 Placement for error/success messages @backend @gallery-menu
+x (B) 2019-07-25 2019-07-25 Placement for error/success messages @backend @gallery-menu
 o (B) 0000-00-00 2019-07-25 Better Menu and Design on Main page @backend @show-galleries-menu
 o (E) 0000-00-00 2019-07-25 Disabled unusable buttons @backend @gallery-menu
 o (C) 0000-00-00 2019-07-25 Better design for Gutenberg preview @backend @Gutenberg
@@ -10,3 +10,5 @@ o (C) 0000-00-00 2019-07-25 Frontend view dependent of data values @frontend @cs
 o (D) 0000-00-00 2019-07-25 Remove unnecessary libraries from build script @backend @build
 o (B) 0000-00-00 2019-07-25 Add Documentation @Documentation
 o (C) 0000-00-00 2019-07-25 Changes in position are not shown on "Show Galleries" @backend @show-galleries-menu
+o (B) 0000-00-00 2019-07-25 Modal doesn't close on close action @backend @gallery-menu
+o (D) 0000-00-00 2019-07-25 Add dynamic language handling @plugin

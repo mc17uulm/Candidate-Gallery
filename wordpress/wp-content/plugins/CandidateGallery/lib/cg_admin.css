@@ -101,7 +101,7 @@
     margin-top: 10px;
     z-index: 2;
 
-    background: #CF6F8A;
+    background: #9d0a2d;
     border-radius: 3px 0px 0px 3px;
 }
 
@@ -202,7 +202,7 @@ input[type="file"] {
 }
 
 .cg_red {
-    color: #CF6F8A;
+    color: #9d0a2d;
 }
 
 .cg_form_container {

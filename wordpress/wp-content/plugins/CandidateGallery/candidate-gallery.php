@@ -61,6 +61,7 @@ add_action('admin_enqueue_scripts', function () {
     if(in_array($_GET["page"], array('cg_add_gallery', 'cg_edit_gallery', 'candidate-gallery')))
     {
         wp_enqueue_style('cg_admin', plugin_dir_url(__FILE__) . 'lib/cg_admin.css', array(), false, 'all');
+        wp_enqueue_style('React Toastify', plugin_dir_url(__FILE__) . 'lib/ReactToastify.css', array(), false, 'all');
 
         if (is_admin())
         {
