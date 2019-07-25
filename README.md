@@ -1,8 +1,10 @@
 # Candidate Gallery
+###### Version 1.0.alpha
 
-## TODO:
+Mit Candidate Gallery lassen sich schnell und einfach Galerien von Vorständen, Mandatsträgern und/oder Delegierten erstellen und in Wordpress in Beiträge und Seiten einfügen.
 
-* :x: Check for duplicate code
-* :x: Test
-* :x: Comment
-* ...
+**Version 1.0.alpha is not recommended for production!**
+
+TODOS in ``todo.txt``
+
+
