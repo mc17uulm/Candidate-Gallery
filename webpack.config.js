@@ -55,7 +55,7 @@ let backend = Object.assign({}, config, {
     },
     output: {
         filename: "cg_backend.js",
-        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
+        path: resolve(__dirname, "dist/")
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
@@ -92,7 +92,7 @@ let gutenberg = Object.assign({}, config, {
     },
     output: {
         filename: "cg_gutenberg.js",
-        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
+        path: resolve(__dirname, "dist/")
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"]
@@ -150,7 +150,7 @@ let frontend = Object.assign({}, config, {
     },
     output: {
         filename: "cg_frontend.js",
-        path: resolve(__dirname, "wordpress/wp-content/plugins/CandidateGallery/dist/")
+        path: resolve(__dirname, "dist/")
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]

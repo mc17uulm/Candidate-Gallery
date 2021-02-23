@@ -1,14 +1,4 @@
 .idea/
-test.php
-.vscode/
-build/
 node_modules/
-wordpress/*
-!wordpress/wp-content/
-wordpress/wp-content/*
-!wordpress/wp-content/plugins/
-wordpress/wp-content/plugins/*
-!wordpress/wp-content/plugins/CandidateGallery/
-wordpress/wp-content/plugins/CandidateGallery/*
-!wordpress/wp-content/plugins/CandidateGallery/backend/
-!wordpress/wp-content/plugins/CandidateGallery/lib/
+vendor/
+dist/
