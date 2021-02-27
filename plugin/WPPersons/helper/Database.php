@@ -1,6 +1,6 @@
 <?php
 
-namespace CandidateGallery\helper;
+namespace WPPersons\helper;
 
 use CandidateGallery\Gallery;
 use CandidateGallery\Board;

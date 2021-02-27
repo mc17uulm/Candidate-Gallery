@@ -1,159 +1,107 @@
 const {resolve} = require('path');
+const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 
 let config = {
     module: {}
 };
 
-let backend = Object.assign({}, config, {
+const rules = [
+    {
+        test: /\.(js|jsx)$/,
+        exclude: [
+            /node_modules/,
+            /dist/,
+            /vendor/
+        ],
+        use: {
+            loader: "babel-loader"
+        }
+    }, {
+        test: /\.(ts|tsx)$/,
+        exclude: [
+            /node_modules/,
+            /dist/,
+            /vendor/
+        ],
+        use: {
+            loader: "ts-loader"
+        }
+    }, {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader?-url']
+    }, {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader?-url', 'sass-loader']
+    }, {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: {
+            loader: 'file-loader?name=/img/[name].[ext]'
+        }
+    }, {
+        test: /\.svg$/,
+        use: {
+            loader: 'svg-url-loader',
+            options: {
+                limit: 10000
+            }
+        }
+    }, {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+            loader: 'file-loader',
+            options: {
+                name: '[name].[ext]',
+                outputPath: 'fonts/'
+            }
+        }
+    }
+];
+
+const backend = Object.assign({}, config, {
     name: "backend",
-    entry: "./src/js/backend/",
+    entry: "./components/backend/scripts/index.ts",
     module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: [
-                    /node_modules/,
-                    /dist/,
-                    /vendor/
-                ],
-                use: {
-                    loader: "babel-loader"
-                }
-            }, {
-                test: /\.(ts|tsx)$/,
-                exclude: [
-                    /node_modules/,
-                    /vendor/
-                ],
-                use: [
-                    {
-                        loader: "ts-loader"
-                    }
-                ]
-            }, {
-                test: /\.less$/,
-                exclude: [
-                    /node_modules/,
-                    /dist/,
-                    /vendor/
-                ],
-                use: [
-                    {
-                        loader: "style-loader",
-                    }, {
-                        loader: "typings-for-css-modules-loader",
-                        options: {
-                            modules: true,
-                            namesExport: true
-                        }
-                    },{
-                        loader: "less-loader"
-                    }
-                ]
-            }
-        ]
+        rules: rules
     },
     output: {
-        filename: "cg_backend.js",
-        path: resolve(__dirname, "dist/")
+        filename: 'js/persons_frontend.js',
+        path: resolve(__dirname, 'dist/')
     },
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
     }
 });
 
-let gutenberg = Object.assign({}, config, {
-    name: "gutenberg",
-    entry: "./src/js/gutenberg",
+const frontend = Object.assign({}, config, {
+    name: 'frontend',
+    entry: './components/frontend/index.ts',
     module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: [
-                    /node_modules/,
-                    /dist/,
-                    /vendor/
-                ],
-                use: {
-                    loader: "babel-loader"
-                }
-            }, {
-                test: /\.(ts|tsx)$/,
-                exclude: [
-                    /node_modules/
-                ],
-                use: [
-                    {
-                        loader: "ts-loader"
-                    }
-                ]
-            }
-        ]
+        rules: rules
     },
     output: {
-        filename: "cg_gutenberg.js",
-        path: resolve(__dirname, "dist/")
+        filename: 'js/persons_backend.js',
+        path: resolve(__dirname, 'dist/')
     },
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"]
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
     }
 });
 
-let frontend = Object.assign({}, config, {
-    name: "frontend",
-    entry: "./src/js/frontend/",
+const gutenberg = Object.assign({}, config, {
+    name: 'gutenberg',
+    entry: './components/gutenberg/index.ts',
     module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: [
-                    /node_modules/,
-                    /dist/,
-                    /vendor/
-                ],
-                use: {
-                    loader: "babel-loader"
-                }
-            }, {
-                test: /\.(ts|tsx)$/,
-                exclude: [
-                    /node_modules/,
-                    /vendor/
-                ],
-                use: [
-                    {
-                        loader: "ts-loader"
-                    }
-                ]
-            }, {
-                test: /\.less$/,
-                exclude: [
-                    /node_modules/,
-                    /dist/,
-                    /vendor/
-                ],
-                use: [
-                    {
-                        loader: "style-loader",
-                    }, {
-                        loader: "typings-for-css-modules-loader",
-                        options: {
-                            modules: true,
-                            namesExport: true
-                        }
-                    },{
-                        loader: "less-loader"
-                    }
-                ]
-            }
-        ]
+        rules: rules
     },
     output: {
-        filename: "cg_frontend.js",
-        path: resolve(__dirname, "dist/")
+        filename: 'js/persons_gutenberg.js',
+        path: resolve(__dirname, 'dist/')
     },
+    plugins: [
+        new DependencyExtractionWebpackPlugin({injectPolyfill: true})
+    ],
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".less"]
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss']
     }
 });
 

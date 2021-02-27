@@ -20,20 +20,14 @@
 
 require_once 'vendor/autoload.php';
 
+use WPPersons\Loader;
+
+Loader::run();
+
 use CandidateGallery\App;
-use CandidateGallery\helper\Database;
 use CandidateGallery\API;
 use CandidateGallery\View;
 
-// Initialize Database on plugin activation
-register_activation_hook(__FILE__, function() {
-    Database::initialize();
-});
-
-// Remove Database tables on plugin deactivation
-register_deactivation_hook(__FILE__, function() {
-    Database::remove();
-});
 
 // Load frontend scripts
 add_action('wp_enqueue_scripts', function () {
